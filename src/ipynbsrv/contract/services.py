@@ -47,10 +47,11 @@ class IntegrityService(Service):
         raise NotImplementedError
 
     '''
-    Verifies the integrity of the input text using the provided key.
+    Verifies the signature of the input text using the provided key.
 
-    :param text: The text to verify the integrity of.
-    :param key: The key to verify the text with.
+    :param text: The text to verify the signature of.
+    :param signature: The signature to verify for the text.
+    :param key: The key to verify the signature with.
     '''
-    def verify(self, text, key):
+    def verify(self, text, signature, key):
         raise NotImplementedError

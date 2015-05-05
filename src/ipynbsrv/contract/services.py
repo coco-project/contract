@@ -1,18 +1,19 @@
-'''
-The interface defines a service in the sense of 'a resource that can be used for only a handful of jobs'.
-'''
 class Service(object):
+    '''
+    The interface defines a service in the sense of 'a resource that can be used for only a handful of jobs'.
+    '''
     pass
 
 
-'''
-The encryption service interfaces defines the public API a concrete implementation has to fullfil
-to be a compliant ipynbsrv encryption service.
-
-These services are used whenever (sensitive) data have to be transfered between different actors
-and the connection cannot be considered secure.
-'''
 class EncryptionService(Service):
+    '''
+    The encryption service interfaces defines the public API a concrete implementation has to fullfil
+    to be a compliant ipynbsrv encryption service.
+
+    These services are used whenever (sensitive) data have to be transfered between different actors
+    and the connection cannot be considered secure.
+    '''
+
     '''
     Decrypts the input cipher text with the given key.
 
@@ -32,11 +33,12 @@ class EncryptionService(Service):
         raise NotImplementedError
 
 
-'''
-The integrity services are used whenever the integrity of a resource (message, status etc.) needs to
-be ensured.
-'''
 class IntegrityService(Service):
+    '''
+    The integrity services are used whenever the integrity of a resource (message, status etc.) needs to
+    be ensured.
+    '''
+
     '''
     Signs the input text with the provided key.
 

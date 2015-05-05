@@ -24,6 +24,8 @@ class ContainerBackend(Backend):
     '''
     The container backend is used to abstract container/virtualization backends like
     Docker or VirtualBox.
+
+    All methods accept kwargs so individual data can be passed to conrete implementations.
     '''
 
     '''
@@ -31,7 +33,7 @@ class ContainerBackend(Backend):
 
     :param container: The container to check.
     '''
-    def container_exists(self, container):
+    def container_exists(self, container, **kwargs):
         raise NotImplementedError
 
     '''
@@ -39,7 +41,7 @@ class ContainerBackend(Backend):
 
     :param container: The container to check.
     '''
-    def container_is_running(self, container):
+    def container_is_running(self, container, **kwargs):
         raise NotImplementedError
 
     '''
@@ -47,16 +49,15 @@ class ContainerBackend(Backend):
 
     :param container: The container to create on the backend.
     '''
-    def create_container(self, container):
+    def create_container(self, container, **kwargs):
         raise NotImplementedError
 
     '''
     Deletes the container.
 
     :param container: The container to delete.
-    :param force: If true, tries to delete the container in any case (e.g. also if it is running).
     '''
-    def delete_container(self, container, force=False):
+    def delete_container(self, container, **kwargs):
         raise NotImplementedError
 
     '''
@@ -65,7 +66,7 @@ class ContainerBackend(Backend):
     :param container: The container to execute the command in.
     :param cmd: The command to execute.
     '''
-    def exec_in_container(self, container, cmd):
+    def exec_in_container(self, container, cmd, **kwargs):
         raise NotImplementedError
 
     '''
@@ -73,7 +74,7 @@ class ContainerBackend(Backend):
 
     :param container: The container to get the information of.
     '''
-    def get_container(self, container):
+    def get_container(self, container, **kwargs):
         raise NotImplementedError
 
     '''
@@ -81,7 +82,7 @@ class ContainerBackend(Backend):
 
     :param container: The container to get the information of.
     '''
-    def get_container_logs(self, container):
+    def get_container_logs(self, container, **kwargs):
         raise NotImplementedError
 
     '''
@@ -89,8 +90,17 @@ class ContainerBackend(Backend):
 
     :param only_running: If true, only running containers are returned.
     '''
-    def get_containers(self, only_running=False):
-        return NotImplemented
+    def get_containers(self, only_running=False, **kwargs):
+        return NotImplementedError
+
+    '''
+    Returns a list of field names the backend expects the input objects
+    to the create_container method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_creation_fields(self):
+        return NotImplementedError
 
     '''
     Restarts the container.
@@ -99,9 +109,8 @@ class ContainerBackend(Backend):
     be overriden, since the default implementation does two simple start/stop calls.
 
     :param container: The container to restart.
-    :param force: If true, tries to stop the container in any case (e.g. kills it after a given timeout).
     '''
-    def restart_container(self, container, force=False):
+    def restart_container(self, container, **kwargs):
         self.stop(force=force)
         self.start()
 
@@ -117,9 +126,8 @@ class ContainerBackend(Backend):
     Stops the container.
 
     :param container: The container to stop.
-    :param force: If true, tries to stop the container in any case (e.g. kills it after a given timeout).
     '''
-    def stop_container(self, container, force=False):
+    def stop_container(self, container, **kwargs):
         raise NotImplementedError
 
 
@@ -134,7 +142,7 @@ class CloneableContainerBackend(ContainerBackend):
 
     :param container: The container to clone.
     '''
-    def clone_container(self, container):
+    def clone_container(self, container, **kwargs):
         raise NotImplementedError
 
 
@@ -150,7 +158,7 @@ class SnapshotableContainerBackend(ContainerBackend):
     :param container: The container to check.
     :param name: The name of the snapshot to check.
     '''
-    def container_snapshot_exists(self, container, name):
+    def container_snapshot_exists(self, container, name, **kwargs):
         raise NotImplemented
 
     '''
@@ -159,7 +167,7 @@ class SnapshotableContainerBackend(ContainerBackend):
     :param container: The container to snapshot.
     :param name: The name of the created snapshot.
     '''
-    def create_container_snapshot(self, container, name):
+    def create_container_snapshot(self, container, name, **kwargs):
         raise NotImplementedError
 
     '''
@@ -168,7 +176,7 @@ class SnapshotableContainerBackend(ContainerBackend):
     :param container: The container to act on.
     :param snapshot: The snapshot to delete.
     '''
-    def delete_container_snapshot(self, container, snapshot):
+    def delete_container_snapshot(self, container, snapshot, **kwargs):
         raise NotImplementedError
 
     '''
@@ -177,7 +185,7 @@ class SnapshotableContainerBackend(ContainerBackend):
     :param container: The container to restore.
     :param snapshot: The snapshot to restore.
     '''
-    def restore_container_snapshot(self, container, snapshot):
+    def restore_container_snapshot(self, container, snapshot, **kwargs):
         raise NotImplementedError
 
 

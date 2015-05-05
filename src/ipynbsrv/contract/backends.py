@@ -141,8 +141,9 @@ class CloneableContainerBackend(ContainerBackend):
     Clones the container and returns the newly created one (clone).
 
     :param container: The container to clone.
+    :param clone: The container with the information to use for the clone.
     '''
-    def clone_container(self, container, **kwargs):
+    def clone_container(self, container, clone, **kwargs):
         raise NotImplementedError
 
 

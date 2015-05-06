@@ -6,6 +6,7 @@ class Backend(object):
 
     Actions performed on instances of a backend should be reflected to its underlaying backend.
     '''
+    pass
 
 
 class BackendError(Exception):
@@ -16,8 +17,16 @@ class BackendError(Exception):
     '''
 
     def __init__(self, message):
-        super(BackendError, self).__init__(message)
+        super(Backend.Error, self).__init__(message)
         self.message = message
+
+
+class NotFoundError(BackendError):
+    '''
+    Error meant to be raised when an operation can not be performed
+    because the resource on which the method should act does not exist.
+    '''
+    pass
 
 
 class ContainerBackend(Backend):
@@ -103,6 +112,15 @@ class ContainerBackend(Backend):
         return NotImplementedError
 
     '''
+    Returns a list of field names the backend expects the input objects
+    to the start_container method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_start_fields(self):
+        return NotImplementedError
+
+    '''
     Restarts the container.
 
     If the concret backend has a native restart implementation, this method should
@@ -131,6 +149,30 @@ class ContainerBackend(Backend):
         raise NotImplementedError
 
 
+class ContainerBackendError(BackendError):
+    '''
+    Backend error type for container backends.
+    '''
+    pass
+
+
+class ContainerNotFoundError(NotFoundError, ContainerBackendError):
+    '''
+    Error meant to be raised when an operation can not be performed
+    because the container on which the method should act does not exist.
+    '''
+    pass
+
+
+class IllegalContainerStateError(ContainerBackendError):
+    '''
+    Error meant to be raised when an operation can not be performed
+    because the container on which the method should act is in an
+    illegal state (e.g. exec method and the container is stopped).
+    '''
+    pass
+
+
 class CloneableContainerBackend(ContainerBackend):
     '''
     The cloneable container backend extends the regular container backend
@@ -141,9 +183,8 @@ class CloneableContainerBackend(ContainerBackend):
     Clones the container and returns the newly created one (clone).
 
     :param container: The container to clone.
-    :param clone: The container with the information to use for the clone.
     '''
-    def clone_container(self, container, clone, **kwargs):
+    def clone_container(self, container, **kwargs):
         raise NotImplementedError
 
 
@@ -181,6 +222,23 @@ class SnapshotableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
     '''
+    Returns information about the container's snapshot.
+
+    :param container: The container to get the snapshots for.
+    :param snapshot: The snapshot to get information for.
+    '''
+    def get_container_snapshot(self, container, snapshot, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of snapshots for the given container.
+
+    :param container: The container to get the snapshots for.
+    '''
+    def get_container_snapshots(self, container, **kwargs):
+        raise NotImplementedError
+
+    '''
     Restores the container's snapshot.
 
     :param container: The container to restore.
@@ -190,8 +248,9 @@ class SnapshotableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
 
-class ContainerBackendError(BackendError):
+class ContainerSnapshotNotFoundError(ContainerNotFoundError):
     '''
-    Backend error type for container backends.
+    Error meant to be raised when an operation can not be performed
+    because the snapshot on which the method should act does not exist.
     '''
     pass

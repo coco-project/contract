@@ -270,7 +270,7 @@ class SnapshotableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
 
-class ContainerSnapshotNotFoundError(ContainerNotFoundError):
+class ContainerSnapshotNotFoundError(ContainerBackendError):
     '''
     Error meant to be raised when an operation can not be performed
     because the snapshot on which the method should act does not exist.
@@ -308,3 +308,64 @@ class SuspendableContainerBackend(ContainerBackend):
     '''
     def suspend_container(self, container, **kwargs):
         raise NotImplementedError
+
+
+class ImageBasedContainerBackend(ContainerBackend):
+    '''
+    The image based container backend interface can be implemented by container backends
+    to signalize that they are image/template based.
+    '''
+
+    '''
+    Creates a new image from the specification.
+
+    :param specification: The specification for the new image.
+    '''
+    def create_image(self, specification, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Deletes the container image.
+
+    :param image: The image to delete.
+    '''
+    def delete_image(self, image, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns information about the requested image.
+
+    :param image: The image to get.
+    '''
+    def get_image(self, image, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of available container images.
+    '''
+    def get_images(self, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of field names the backend expects the input objects
+    to the create_image method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_image_creation_fields(self):
+        raise NotImplementedError
+
+    '''
+    Checks if the image exists on the backend.
+
+    :param image: The image to check for.
+    '''
+    def image_exists(self, image):
+        raise NotImplementedError
+
+
+class ContainerImageNotFoundError(NotFoundError, ContainerBackendError):
+    '''
+    Error meant to be raised when an image (container template) does not exist.
+    '''
+    pass

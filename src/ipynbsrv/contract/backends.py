@@ -15,10 +15,7 @@ class BackendError(Exception):
     real exception/error pass up the stack. Every error thrown from the backend
     should be wrapped.
     '''
-
-    def __init__(self, message):
-        super(Backend.Error, self).__init__(message)
-        self.message = message
+    pass
 
 
 class NotFoundError(BackendError):
@@ -56,9 +53,13 @@ class ContainerBackend(Backend):
     '''
     Creates a new container instance.
 
-    :param container: The container to create on the backend.
+    Implementations are free to either use the specification argument or kwargs
+    for input arguments.
+    Required fields should however be included in the specification.
+
+    :param specification: The specification of the to be created container.
     '''
-    def create_container(self, container, **kwargs):
+    def create_container(self, specification, **kwargs):
         raise NotImplementedError
 
     '''
@@ -108,7 +109,7 @@ class ContainerBackend(Backend):
 
     The list should contain tuples in the form: (name, type)
     '''
-    def get_required_creation_fields(self):
+    def get_required_container_creation_fields(self):
         return NotImplementedError
 
     '''
@@ -117,7 +118,7 @@ class ContainerBackend(Backend):
 
     The list should contain tuples in the form: (name, type)
     '''
-    def get_required_start_fields(self):
+    def get_required_container_start_fields(self):
         return NotImplementedError
 
     '''
@@ -164,6 +165,14 @@ class ContainerNotFoundError(NotFoundError, ContainerBackendError):
     pass
 
 
+class IllegalContainerSpecificationError(ContainerBackendError):
+    '''
+    Error meant to be thrown by methods that fail to execute due to
+    a bad (container) specification as per the various get_required_*_fields methods.
+    '''
+    pass
+
+
 class IllegalContainerStateError(ContainerBackendError):
     '''
     Error meant to be raised when an operation can not be performed
@@ -206,10 +215,14 @@ class SnapshotableContainerBackend(ContainerBackend):
     '''
     Creates a snapshop of the container.
 
+    Implementations are free to either use the specification argument or kwargs
+    for input arguments.
+    Required fields should however be included in the specification.
+
     :param container: The container to snapshot.
-    :param name: The name of the created snapshot.
+    :param specification: The specification of the to be created snapshot.
     '''
-    def create_container_snapshot(self, container, name, **kwargs):
+    def create_container_snapshot(self, container, specification, **kwargs):
         raise NotImplementedError
 
     '''
@@ -239,6 +252,15 @@ class SnapshotableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
     '''
+    Returns a list of field names the backend expects the input objects
+    to the create_container_snapshot method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_snapshot_creation_fields(self):
+        raise NotImplementedError
+
+    '''
     Restores the container's snapshot.
 
     :param container: The container to restore.
@@ -254,3 +276,35 @@ class ContainerSnapshotNotFoundError(ContainerNotFoundError):
     because the snapshot on which the method should act does not exist.
     '''
     pass
+
+
+class SuspendableContainerBackend(ContainerBackend):
+    '''
+    The suspendable container backend adds suspend/resume capabilities to
+    the regular container backend. Other than start/stop, these two operations
+    to not really stop a container but actually freeze it.
+    '''
+
+    '''
+    Checks if the container is suspended.
+
+    :param container: The container to check.
+    '''
+    def container_is_suspended(self, container, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Resumes a suspended container.
+
+    :param container: The container to resume.
+    '''
+    def resume_container(self, container, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Suspends a running container.
+
+    :param container: The container to resume.
+    '''
+    def suspend_container(self, container, **kwargs):
+        raise NotImplementedError

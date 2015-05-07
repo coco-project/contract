@@ -9,10 +9,7 @@ class ServiceError(Exception):
     '''
     Base exception class for errors raised by service implementations.
     '''
-
-    def __init__(self, message):
-        super(ServiceError, self).__init__(message)
-        self.message = message
+    pass
 
 
 class EncryptionService(Service):
@@ -81,5 +78,13 @@ class IntegrityService(Service):
 class IntegrityServiceError(ServiceError):
     '''
     Service error type for integrity services.
+    '''
+    pass
+
+
+class IntegrityValidationError(IntegrityServiceError):
+    '''
+    Error to be raised when an integrity (e.g. the return value of a sign() call)
+    cannot be verified or the integrity check fails.
     '''
     pass

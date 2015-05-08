@@ -5,6 +5,9 @@ class Backend(object):
     that exists outside of the application's context.
 
     Actions performed on instances of a backend should be reflected to its underlaying backend.
+
+    All methods creating a resource must return the primary key for that resource as 'pk' and all methods
+    returning resources or a list of them must include that 'pk' field as well.
     '''
     pass
 
@@ -32,9 +35,17 @@ class ContainerBackend(Backend):
     Docker or VirtualBox.
 
     All methods accept kwargs so individual data can be passed to conrete implementations.
-
-    All methods creating a resource must return the primary key for that resource the backend uses.
     '''
+
+    '''
+    String to be used in the 'status' field for a running container.
+    '''
+    STATUS_RUNNING = 'running'
+
+    '''
+    String to be used in the 'status' field for a stopped container.
+    '''
+    STATUS_STOPPED = 'stopped'
 
     '''
     Checks if the given container exists in the backend.
@@ -211,8 +222,8 @@ class SnapshotableContainerBackend(ContainerBackend):
     :param container: The container to check.
     :param name: The name of the snapshot to check.
     '''
-    def container_snapshot_exists(self, container, name, **kwargs):
-        raise NotImplemented
+    def container_snapshot_exists(self, container, snapshot, **kwargs):
+        raise NotImplementedError
 
     '''
     Creates a snapshop of the container.
@@ -286,6 +297,11 @@ class SuspendableContainerBackend(ContainerBackend):
     the regular container backend. Other than start/stop, these two operations
     to not really stop a container but actually freeze it.
     '''
+
+    '''
+    String to be used in the 'status' field for a stopped container.
+    '''
+    STATUS_SUSPENDED = 'suspended'
 
     '''
     Checks if the container is suspended.

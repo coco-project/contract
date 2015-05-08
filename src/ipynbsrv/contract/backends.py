@@ -32,6 +32,8 @@ class ContainerBackend(Backend):
     Docker or VirtualBox.
 
     All methods accept kwargs so individual data can be passed to conrete implementations.
+
+    All methods creating a resource must return the primary key for that resource the backend uses.
     '''
 
     '''
@@ -101,7 +103,7 @@ class ContainerBackend(Backend):
     :param only_running: If true, only running containers are returned.
     '''
     def get_containers(self, only_running=False, **kwargs):
-        return NotImplementedError
+        raise NotImplementedError
 
     '''
     Returns a list of field names the backend expects the input objects
@@ -110,7 +112,7 @@ class ContainerBackend(Backend):
     The list should contain tuples in the form: (name, type)
     '''
     def get_required_container_creation_fields(self):
-        return NotImplementedError
+        raise NotImplementedError
 
     '''
     Returns a list of field names the backend expects the input objects
@@ -119,7 +121,7 @@ class ContainerBackend(Backend):
     The list should contain tuples in the form: (name, type)
     '''
     def get_required_container_start_fields(self):
-        return NotImplementedError
+        raise NotImplementedError
 
     '''
     Restarts the container.

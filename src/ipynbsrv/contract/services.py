@@ -14,6 +14,7 @@ class ContainerHostSelectionService(Service):
 
     :param count: numberof Servers available
     '''
+    @staticmethod
     def get_server(self, count):
         raise NotImplementedError
 

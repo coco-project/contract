@@ -5,6 +5,19 @@ class Service(object):
     pass
 
 
+class ContainerHostSelectionService(Service):
+    '''
+    The container host selection service interface defines the method signature for the algorithm
+    that will choose the docker host for a new container in a multihost environment
+
+    TODO: change interface to something more flexible (i.e. list of dicts with additional information)
+
+    :param count: numberof Servers available
+    '''
+    def get_server(self, count):
+        raise NotImplementedError
+
+
 class ServiceError(Exception):
     '''
     Base exception class for errors raised by service implementations.

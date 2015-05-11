@@ -38,6 +38,16 @@ class ContainerBackend(Backend):
     '''
 
     '''
+    Key to be used in returns as unique identifier for the container.
+    '''
+    FIELD_PK = 'pk'
+
+    '''
+    Key to be used for the value storing the status (see below) of the container..
+    '''
+    FIELD_STATUS = 'status'
+
+    '''
     String to be used in the 'status' field for a running container.
     '''
     STATUS_RUNNING = 'running'

@@ -387,3 +387,39 @@ class ContainerImageNotFoundError(NotFoundError, ContainerBackendError):
     Error meant to be raised when an image (container template) does not exist.
     '''
     pass
+
+
+class UserGroupBackend(Backend):
+    '''
+    The UserGroup backend is used to abstract user and group management backends like LDAP
+
+    All methods accept kwargs so individual data can be passed to conrete implementations.
+    '''
+    pass
+
+    def create_user(self, username, password):
+        pass
+
+    def rename_user(self, username, new_username):
+        pass
+
+    def set_user_password(self, username, password):
+        pass
+
+    def delete_user(self, username):
+        pass
+
+    def add_user_to_group(self, username, groupname):
+        pass
+
+    def remove_user_from_group(self, username, groupname):
+        pass
+
+    def create_group(self, groupname):
+        pass
+
+    def rename_group(self, groupname, groupname_new):
+        pass
+
+    def delete_group(self, groupname):
+        pass

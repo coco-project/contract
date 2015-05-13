@@ -409,10 +409,10 @@ class UserGroupBackend(Backend):
     def delete_user(self, username):
         pass
 
-    def add_user_to_group(self, username, groupname):
+    def add_user_to_group(self, username, gid):
         pass
 
-    def remove_user_from_group(self, username, groupname):
+    def remove_user_from_group(self, username, gid):
         pass
 
     def create_group(self, groupname):

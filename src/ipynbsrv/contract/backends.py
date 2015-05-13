@@ -405,31 +405,79 @@ class UserGroupBackend(Backend):
 
     All methods accept kwargs so individual data can be passed to conrete implementations.
     '''
+
+    '''
+    Key to be used in returns as unique identifier for the group.
+    '''
+    FIELD_GROUP_PK = 'pk'
+
+    '''
+    Key to be used in returns as unique identifier for the user.
+    '''
+    FIELD_USER_PK = 'pk'
+
+    def add_user_to_group(self, user, group, **kwargs):
+        raise NotImplementedError
+
+    def create_group(self, specification, **kwargs):
+        raise NotImplementedError
+
+    def create_user(self, specification, **kwargs):
+        raise NotImplementedError
+
+    def delete_group(self, group, **kwargs):
+        raise NotImplementedError
+
+    def delete_user(self, user, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of field names the backend expects the input objects
+    to the create_group method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_group_creation_fields(self):
+        raise NotImplementedError
+
+    '''
+    Returns a list of field names the backend expects the input objects
+    to the create_user method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_user_creation_fields(self):
+        raise NotImplementedError
+
+    def remove_user_from_group(self, user, group, **kwargs):
+        raise NotImplementedError
+
+    def rename_group(self, group, new_name, **kwargs):
+        raise NotImplementedError
+
+    def rename_user(self, user, new_name, **kwargs):
+        raise NotImplementedError
+
+    def set_user_password(self, user, password, **kwargs):
+        raise NotImplementedError
+
+
+class UserGroupBackendError(BackendError):
+    '''
+    Backend error type for users/groups backends.
+    '''
     pass
 
-    def create_user(self, username, password):
-        pass
 
-    def rename_user(self, username, new_username):
-        pass
+class GroupNotFoundError(NotFoundError, UserGroupBackendError):
+    '''
+    Error meant to be raised when a group does not exist.
+    '''
+    pass
 
-    def set_user_password(self, username, password):
-        pass
 
-    def delete_user(self, username):
-        pass
-
-    def add_user_to_group(self, username, gid):
-        pass
-
-    def remove_user_from_group(self, username, gid):
-        pass
-
-    def create_group(self, groupname):
-        pass
-
-    def rename_group(self, groupname, groupname_new):
-        pass
-
-    def delete_group(self, groupname):
-        pass
+class UserNotFounderror(NotFoundError, UserGroupBackendError):
+    '''
+    Error meant to be raised when a user does not exist.
+    '''
+    pass

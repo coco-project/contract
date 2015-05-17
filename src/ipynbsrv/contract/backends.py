@@ -1,3 +1,6 @@
+import os
+
+
 class Backend(object):
     '''
     The backend interface defines the representation of an external resource
@@ -399,6 +402,126 @@ class ContainerImageNotFoundError(NotFoundError, ContainerBackendError):
     pass
 
 
+class StorageBackend(Backend):
+    '''
+    The storage backend component is used for users' home directories, publications
+    and shared folders. It therefor abstracts basic operations on the filesystem like
+    creating directories, setting owners etc.
+
+    All methods accept kwargs so individual data can be passed to conrete implementations.
+    All implementations are required to accept the 'base_dir' argument in its constructor.
+    '''
+
+    '''
+    Initializes a new storage backend instance that will work within 'base_dir'.
+
+    :param base_dir: The base directory within which should be worked.
+    '''
+    def __init__(self, base_dir):
+        if not os.path.exists(base_dir):
+            raise DirectoryNotFoundError("Base directory does not exist.")
+
+        self.base_dir = base_dir
+
+    '''
+    Checks if the directory with the given name exists.
+
+    :param dir_name: The name of the directory to check.
+    '''
+    def dir_exists(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns the group identifier of the group owning the directory.
+
+    :param dir_name: The directory to get the group for.
+    '''
+    def get_dir_group(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns the direcories access modes.
+
+    :param dir_name: The directory to get the mode for.
+    '''
+    def get_dir_mode(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns the user identifier of the user owning the directory.
+
+    :param dir_name: The directory to get the owner for.
+    '''
+    def get_dir_owner(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns the absolute/full path for the directory.
+
+    :param dir_name: The directory to get the path for.
+    '''
+    def get_full_dir_path(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Creates a directory with the given name.
+
+    :param dir_name: The name of the directory to create.
+    '''
+    def mk_dir(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Deletes the directory from the storage backend.
+
+    :param dir_name: The name of the directory to delete.
+    '''
+    def rm_dir(self, dir_name, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Sets the directory's primary group.
+
+    :param dir_name: The directory to set the group on.
+    :param group: The group to set as primary group.
+    '''
+    def set_dir_group(self, dir_name, group, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Sets the directory's access mode.
+
+    :param dir_name: The directory to set the group on.
+    :param mode: The access mode to set.
+    '''
+    def set_dir_mode(self, dir_name, mode, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Sets the directory's owner.
+
+    :param dir_name: The directory to set the group on.
+    :param owner: The user to set as an owner.
+    '''
+    def set_dir_owner(self, dir_name, owner, **kwargs):
+        raise NotImplementedError
+
+
+class StorageBackendError(BackendError):
+    '''
+    Backend error type for storage backends.
+    '''
+    pass
+
+
+class DirectoryNotFoundError(NotFoundError, StorageBackendError):
+    '''
+    Storage backend error to be raised when the directory on which an operation
+    should be performed does not exist.
+    '''
+    pass
+
+
 class UserGroupBackend(Backend):
     '''
     The UserGroup backend is used to abstract user and group management backends like LDAP
@@ -473,7 +596,6 @@ class GroupNotFoundError(NotFoundError, UserGroupBackendError):
     '''
     Error meant to be raised when a group does not exist.
     '''
-    pass
 
 
 class UserNotFounderror(NotFoundError, UserGroupBackendError):

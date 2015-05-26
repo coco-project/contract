@@ -572,6 +572,15 @@ class UserGroupBackend(Backend):
     def get_required_user_creation_fields(self):
         raise NotImplementedError
 
+    def get_user(self, pk, **kwargs):
+        raise NotImplementedError
+
+    def get_users(self, **kwargs):
+        raise NotImplementedError
+
+    def get_users_by_group(self, group, **kwargs):
+        raise NotImplementedError
+
     def remove_user_from_group(self, user, group, **kwargs):
         raise NotImplementedError
 
@@ -583,6 +592,13 @@ class UserGroupBackend(Backend):
 
     def set_user_password(self, user, password, **kwargs):
         raise NotImplementedError
+
+    def user_exists(self, user):
+        try:
+            self.get_user(user)
+            return True
+        except UserNotFoundError:
+            return False
 
 
 class UserGroupBackendError(BackendError):
@@ -598,8 +614,19 @@ class GroupNotFoundError(NotFoundError, UserGroupBackendError):
     '''
 
 
-class UserNotFounderror(NotFoundError, UserGroupBackendError):
+class UserNotFoundError(NotFoundError, UserGroupBackendError):
     '''
     Error meant to be raised when a user does not exist.
     '''
     pass
+
+
+class AuthenticationBackend(object):
+    '''
+    https://docs.djangoproject.com/en/1.4/topics/auth/#writing-an-authentication-backend
+    '''
+    def authenticate(self, username=None, password=None):
+        raise NotImplementedError
+
+    def get_user(self, user_id):
+        raise NotImplementedError

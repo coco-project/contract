@@ -522,9 +522,9 @@ class DirectoryNotFoundError(NotFoundError, StorageBackendError):
     pass
 
 
-class UserGroupBackend(Backend):
+class GroupBackend(Backend):
     '''
-    The UserGroup backend is used to abstract user and group management backends like LDAP
+    The Group backend is used to abstract group management backends like LDAP
 
     All methods accept kwargs so individual data can be passed to conrete implementations.
     '''
@@ -534,24 +534,13 @@ class UserGroupBackend(Backend):
     '''
     FIELD_GROUP_PK = 'pk'
 
-    '''
-    Key to be used in returns as unique identifier for the user.
-    '''
-    FIELD_USER_PK = 'pk'
-
     def add_user_to_group(self, user, group, **kwargs):
         raise NotImplementedError
 
     def create_group(self, specification, **kwargs):
         raise NotImplementedError
 
-    def create_user(self, specification, **kwargs):
-        raise NotImplementedError
-
     def delete_group(self, group, **kwargs):
-        raise NotImplementedError
-
-    def delete_user(self, user, **kwargs):
         raise NotImplementedError
 
     '''
@@ -561,6 +550,34 @@ class UserGroupBackend(Backend):
     The list should contain tuples in the form: (name, type)
     '''
     def get_required_group_creation_fields(self):
+        raise NotImplementedError
+
+    def get_users_by_group(self, group, **kwargs):
+        raise NotImplementedError
+
+    def remove_user_from_group(self, user, group, **kwargs):
+        raise NotImplementedError
+
+    def rename_group(self, group, new_name, **kwargs):
+        raise NotImplementedError
+
+
+class UserBackend(Backend):
+    '''
+    The User backend is used to abstract user management backends like LDAP
+
+    All methods accept kwargs so individual data can be passed to conrete implementations.
+    '''
+
+    '''
+    Key to be used in returns as unique identifier for the user.
+    '''
+    FIELD_USER_PK = 'pk'
+
+    def create_user(self, specification, **kwargs):
+        raise NotImplementedError
+
+    def delete_user(self, user, **kwargs):
         raise NotImplementedError
 
     '''
@@ -576,15 +593,6 @@ class UserGroupBackend(Backend):
         raise NotImplementedError
 
     def get_users(self, **kwargs):
-        raise NotImplementedError
-
-    def get_users_by_group(self, group, **kwargs):
-        raise NotImplementedError
-
-    def remove_user_from_group(self, user, group, **kwargs):
-        raise NotImplementedError
-
-    def rename_group(self, group, new_name, **kwargs):
         raise NotImplementedError
 
     def rename_user(self, user, new_name, **kwargs):

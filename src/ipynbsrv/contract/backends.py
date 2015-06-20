@@ -613,20 +613,33 @@ class UserGroupBackendError(BackendError):
     '''
     Backend error type for users/groups backends.
     '''
-    pass
+    def __init__(self, value):
+        self.value = value
+
+    def __str__(self):
+        return repr(self.value)
 
 
 class GroupNotFoundError(NotFoundError, UserGroupBackendError):
     '''
     Error meant to be raised when a group does not exist.
     '''
+    def __init__(self, group):
+        self.group = group
+
+    def __str__(self):
+        return 'Group not found: {0}'.format(repr(self.group))
 
 
 class UserNotFoundError(NotFoundError, UserGroupBackendError):
     '''
     Error meant to be raised when a user does not exist.
     '''
-    pass
+    def __init__(self, user):
+        self.user = user
+
+    def __str__(self):
+        return 'User not found: {0}'.format(repr(self.user))
 
 
 class AuthenticationBackend(object):

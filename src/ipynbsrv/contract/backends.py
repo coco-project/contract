@@ -151,7 +151,7 @@ class ContainerBackend(Backend):
     :param container: The container to restart.
     '''
     def restart_container(self, container, **kwargs):
-        self.stop(force=kwargs.get('force', False)
+        self.stop(force=kwargs.get('force', False))
         self.start()
 
     '''

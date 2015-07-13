@@ -1,3 +1,4 @@
+from ipynbsrv.contract.errors import UserNotFoundError
 import os
 
 
@@ -15,21 +16,15 @@ class Backend(object):
     pass
 
 
-class BackendError(Exception):
+class AuthenticationBackend(Backend):
     '''
-    Backend errors are meant to be raised instead of letting the backend's
-    real exception/error pass up the stack. Every error thrown from the backend
-    should be wrapped.
+    https://docs.djangoproject.com/en/1.4/topics/auth/#writing-an-authentication-backend
     '''
-    pass
+    def authenticate(self, username=None, password=None):
+        raise NotImplementedError
 
-
-class NotFoundError(BackendError):
-    '''
-    Error meant to be raised when an operation can not be performed
-    because the resource on which the method should act does not exist.
-    '''
-    pass
+    def get_user(self, user_id):
+        raise NotImplementedError
 
 
 class ContainerBackend(Backend):
@@ -176,38 +171,6 @@ class ContainerBackend(Backend):
         raise NotImplementedError
 
 
-class ContainerBackendError(BackendError):
-    '''
-    Backend error type for container backends.
-    '''
-    pass
-
-
-class ContainerNotFoundError(NotFoundError, ContainerBackendError):
-    '''
-    Error meant to be raised when an operation can not be performed
-    because the container on which the method should act does not exist.
-    '''
-    pass
-
-
-class IllegalContainerSpecificationError(ContainerBackendError):
-    '''
-    Error meant to be thrown by methods that fail to execute due to
-    a bad (container) specification as per the various get_required_*_fields methods.
-    '''
-    pass
-
-
-class IllegalContainerStateError(ContainerBackendError):
-    '''
-    Error meant to be raised when an operation can not be performed
-    because the container on which the method should act is in an
-    illegal state (e.g. exec method and the container is stopped).
-    '''
-    pass
-
-
 class CloneableContainerBackend(ContainerBackend):
     '''
     The cloneable container backend extends the regular container backend
@@ -220,6 +183,60 @@ class CloneableContainerBackend(ContainerBackend):
     :param container: The container to clone.
     '''
     def clone_container(self, container, **kwargs):
+        raise NotImplementedError
+
+
+class ImageBasedContainerBackend(ContainerBackend):
+    '''
+    The image based container backend interface can be implemented by container backends
+    to signalize that they are image/template based.
+    '''
+
+    '''
+    Creates a new image from the specification.
+
+    :param specification: The specification for the new image.
+    '''
+    def create_image(self, specification, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Deletes the container image.
+
+    :param image: The image to delete.
+    '''
+    def delete_image(self, image, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns information about the requested image.
+
+    :param image: The image to get.
+    '''
+    def get_image(self, image, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of available container images.
+    '''
+    def get_images(self, **kwargs):
+        raise NotImplementedError
+
+    '''
+    Returns a list of field names the backend expects the input objects
+    to the create_image method to have at least.
+
+    The list should contain tuples in the form: (name, type)
+    '''
+    def get_required_image_creation_fields(self):
+        raise NotImplementedError
+
+    '''
+    Checks if the image exists on the backend.
+
+    :param image: The image to check for.
+    '''
+    def image_exists(self, image):
         raise NotImplementedError
 
 
@@ -296,14 +313,6 @@ class SnapshotableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
 
-class ContainerSnapshotNotFoundError(ContainerBackendError):
-    '''
-    Error meant to be raised when an operation can not be performed
-    because the snapshot on which the method should act does not exist.
-    '''
-    pass
-
-
 class SuspendableContainerBackend(ContainerBackend):
     '''
     The suspendable container backend adds suspend/resume capabilities to
@@ -341,65 +350,44 @@ class SuspendableContainerBackend(ContainerBackend):
         raise NotImplementedError
 
 
-class ImageBasedContainerBackend(ContainerBackend):
+class GroupBackend(Backend):
     '''
-    The image based container backend interface can be implemented by container backends
-    to signalize that they are image/template based.
+    The Group backend is used to abstract group management backends like LDAP.
+
+    All methods accept kwargs so individual data can be passed to conrete implementations.
     '''
 
     '''
-    Creates a new image from the specification.
-
-    :param specification: The specification for the new image.
+    Key to be used in returns as unique identifier for the group.
     '''
-    def create_image(self, specification, **kwargs):
+    FIELD_GROUP_PK = 'pk'
+
+    def add_user_to_group(self, user, group, **kwargs):
         raise NotImplementedError
 
-    '''
-    Deletes the container image.
-
-    :param image: The image to delete.
-    '''
-    def delete_image(self, image, **kwargs):
+    def create_group(self, specification, **kwargs):
         raise NotImplementedError
 
-    '''
-    Returns information about the requested image.
-
-    :param image: The image to get.
-    '''
-    def get_image(self, image, **kwargs):
-        raise NotImplementedError
-
-    '''
-    Returns a list of available container images.
-    '''
-    def get_images(self, **kwargs):
+    def delete_group(self, group, **kwargs):
         raise NotImplementedError
 
     '''
     Returns a list of field names the backend expects the input objects
-    to the create_image method to have at least.
+    to the create_group method to have at least.
 
     The list should contain tuples in the form: (name, type)
     '''
-    def get_required_image_creation_fields(self):
+    def get_required_group_creation_fields(self):
         raise NotImplementedError
 
-    '''
-    Checks if the image exists on the backend.
-
-    :param image: The image to check for.
-    '''
-    def image_exists(self, image):
+    def get_users_by_group(self, group, **kwargs):
         raise NotImplementedError
 
+    def remove_user_from_group(self, user, group, **kwargs):
+        raise NotImplementedError
 
-class ContainerImageNotFoundError(NotFoundError, ContainerBackendError):
-    '''
-    Error meant to be raised when an image (container template) does not exist.
-    '''
-    pass
+    def rename_group(self, group, new_name, **kwargs):
+        raise NotImplementedError
 
 
 class StorageBackend(Backend):
@@ -507,64 +495,9 @@ class StorageBackend(Backend):
         raise NotImplementedError
 
 
-class StorageBackendError(BackendError):
-    '''
-    Backend error type for storage backends.
-    '''
-    pass
-
-
-class DirectoryNotFoundError(NotFoundError, StorageBackendError):
-    '''
-    Storage backend error to be raised when the directory on which an operation
-    should be performed does not exist.
-    '''
-    pass
-
-
-class GroupBackend(Backend):
-    '''
-    The Group backend is used to abstract group management backends like LDAP
-
-    All methods accept kwargs so individual data can be passed to conrete implementations.
-    '''
-
-    '''
-    Key to be used in returns as unique identifier for the group.
-    '''
-    FIELD_GROUP_PK = 'pk'
-
-    def add_user_to_group(self, user, group, **kwargs):
-        raise NotImplementedError
-
-    def create_group(self, specification, **kwargs):
-        raise NotImplementedError
-
-    def delete_group(self, group, **kwargs):
-        raise NotImplementedError
-
-    '''
-    Returns a list of field names the backend expects the input objects
-    to the create_group method to have at least.
-
-    The list should contain tuples in the form: (name, type)
-    '''
-    def get_required_group_creation_fields(self):
-        raise NotImplementedError
-
-    def get_users_by_group(self, group, **kwargs):
-        raise NotImplementedError
-
-    def remove_user_from_group(self, user, group, **kwargs):
-        raise NotImplementedError
-
-    def rename_group(self, group, new_name, **kwargs):
-        raise NotImplementedError
-
-
 class UserBackend(Backend):
     '''
-    The User backend is used to abstract user management backends like LDAP
+    The User backend is used to abstract user management backends like LDAP.
 
     All methods accept kwargs so individual data can be passed to conrete implementations.
     '''
@@ -607,47 +540,3 @@ class UserBackend(Backend):
             return True
         except UserNotFoundError:
             return False
-
-
-class UserGroupBackendError(BackendError):
-    '''
-    Backend error type for users/groups backends.
-    '''
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
-
-
-class GroupNotFoundError(NotFoundError, UserGroupBackendError):
-    '''
-    Error meant to be raised when a group does not exist.
-    '''
-    def __init__(self, group):
-        self.group = group
-
-    def __str__(self):
-        return 'Group not found: {0}'.format(repr(self.group))
-
-
-class UserNotFoundError(NotFoundError, UserGroupBackendError):
-    '''
-    Error meant to be raised when a user does not exist.
-    '''
-    def __init__(self, user):
-        self.user = user
-
-    def __str__(self):
-        return 'User not found: {0}'.format(repr(self.user))
-
-
-class AuthenticationBackend(object):
-    '''
-    https://docs.djangoproject.com/en/1.4/topics/auth/#writing-an-authentication-backend
-    '''
-    def authenticate(self, username=None, password=None):
-        raise NotImplementedError
-
-    def get_user(self, user_id):
-        raise NotImplementedError

@@ -157,3 +157,39 @@ class UserNotFoundError(NotFoundError, UserBackendError):
 
     def __str__(self):
         return "User %s not found" % repr(self.user)
+
+
+class ServiceError(Exception):
+
+    """
+    Base exception class for errors raised by service implementations.
+    """
+
+    pass
+
+
+class EncryptionServiceError(ServiceError):
+
+    """
+    Service error type for encryption services.
+    """
+
+    pass
+
+
+class IntegrityServiceError(ServiceError):
+
+    """
+    Service error type for integrity services.
+    """
+
+    pass
+
+
+class IntegrityValidationError(IntegrityServiceError):
+
+    """
+    Error to be raised when an integrity cannot be verified or the integrity check fails.
+    """
+
+    pass

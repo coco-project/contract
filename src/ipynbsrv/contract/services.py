@@ -7,15 +7,6 @@ class Service(object):
     pass
 
 
-class ServiceError(Exception):
-
-    """
-    Base exception class for errors raised by service implementations.
-    """
-
-    pass
-
-
 class EncryptionService(Service):
 
     """
@@ -46,15 +37,6 @@ class EncryptionService(Service):
         raise NotImplementedError
 
 
-class EncryptionServiceError(ServiceError):
-
-    """
-    Service error type for encryption services.
-    """
-
-    pass
-
-
 class IntegrityService(Service):
 
     """
@@ -82,21 +64,3 @@ class IntegrityService(Service):
         :param key: The key to verify the signature with.
         """
         raise NotImplementedError
-
-
-class IntegrityServiceError(ServiceError):
-
-    """
-    Service error type for integrity services.
-    """
-
-    pass
-
-
-class IntegrityValidationError(IntegrityServiceError):
-
-    """
-    Error to be raised when an integrity cannot be verified or the integrity check fails.
-    """
-
-    pass

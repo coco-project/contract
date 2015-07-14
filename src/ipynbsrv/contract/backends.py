@@ -20,25 +20,6 @@ class Backend(object):
     pass
 
 
-class AuthenticationBackend(Backend):
-
-    """
-    https://docs.djangoproject.com/en/1.4/topics/auth/#writing-an-authentication-backend.
-    """
-
-    def authenticate(self, username=None, password=None):
-        """
-        TODO: write doc.
-        """
-        raise NotImplementedError
-
-    def get_user(self, user_id):
-        """
-        TODO: write doc.
-        """
-        raise NotImplementedError
-
-
 class ContainerBackend(Backend):
 
     """
@@ -389,6 +370,14 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
+    def connect(self, credentials, **kwargs):
+        """
+        Establish the connection to the group backend with the given credentials.
+
+        :param credentials: The login credentials for the backend.
+        """
+        raise NotImplementedError
+
     def create_group(self, specification, **kwargs):
         """
         TODO: write doc.
@@ -398,6 +387,12 @@ class GroupBackend(Backend):
     def delete_group(self, group, **kwargs):
         """
         TODO: write doc.
+        """
+        raise NotImplementedError
+
+    def disconnect(self, **kwargs):
+        """
+        Disconnect from the group backend server.
         """
         raise NotImplementedError
 
@@ -547,6 +542,14 @@ class UserBackend(Backend):
     """
     FIELD_USER_PK = 'pk'
 
+    def connect(self, credentials, **kwargs):
+        """
+        Establish the connection to the user backend with the given credentials.
+
+        :param credentials: The login credentials for the backend.
+        """
+        raise NotImplementedError
+
     def create_user(self, specification, **kwargs):
         """
         TODO: write doc.
@@ -559,6 +562,12 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
+    def disconnect(self, **kwargs):
+        """
+        Disconnect from the user backend server.
+        """
+        raise NotImplementedError
+
     def get_required_user_creation_fields(self):
         """
         Get a list of fields the backend expects the input objects to the create_user method to have at least.
@@ -567,7 +576,7 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
-    def get_user(self, pk, **kwargs):
+    def get_user(self, user, **kwargs):
         """
         TODO: write doc.
         """
@@ -600,3 +609,12 @@ class UserBackend(Backend):
             return True
         except UserNotFoundError:
             return False
+
+    def validate_login(self, user, credentials, **kwargs):
+        """
+        Validate that the given user exists and the credentials (e.g. password) are correct.
+
+        :param user: The user to validate.
+        :param credentials: The credentials identifiying the user.
+        """
+        raise NotImplementedError

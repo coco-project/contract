@@ -11,6 +11,15 @@ class BackendError(Exception):
     pass
 
 
+class ConnectionError(BackendError):
+
+    """
+    Generic backend error meant to be thrown then a connection to the backend cannot be established.
+    """
+
+    pass
+
+
 class NotFoundError(BackendError):
 
     """

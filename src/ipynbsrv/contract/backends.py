@@ -550,6 +550,14 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
+    def validate_login(self, credentials, **kwargs):
+        """
+        Check if the provided credentials are valid.
+
+        :param credentials: The login credentials for the backend to validate
+        """
+        raise NotImplementedError
+
     def create_user(self, specification, **kwargs):
         """
         TODO: write doc.

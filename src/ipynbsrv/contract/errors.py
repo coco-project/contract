@@ -168,6 +168,13 @@ class UserNotFoundError(NotFoundError, UserBackendError):
         return "User %s not found" % repr(self.user)
 
 
+class ReadOnlyError(UserBackendError):
+    '''
+    Backend error type for users/groups backends.
+    '''
+    pass
+
+
 class ServiceError(Exception):
 
     """

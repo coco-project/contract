@@ -360,6 +360,13 @@ class GroupBackend(Backend):
     """
 
     """
+    Key to be used in returns for the unique ID belonging to the group.
+
+    Most of the time, this might be the same as FIELD_GROUP_PK.
+    """
+    FIELD_USER_ID = 'id'
+
+    """
     Key to be used in returns as unique identifier for the group.
     """
     FIELD_GROUP_PK = 'pk'
@@ -538,6 +545,13 @@ class UserBackend(Backend):
     """
 
     """
+    Key to be used in returns for the unique ID belonging to the user.
+
+    Most of the time, this might be the same as FIELD_USER_PK.
+    """
+    FIELD_USER_ID = 'id'
+
+    """
     Key to be used in returns as unique identifier for the user.
     """
     FIELD_USER_PK = 'pk'
@@ -560,13 +574,20 @@ class UserBackend(Backend):
 
     def create_user(self, specification, **kwargs):
         """
-        TODO: write doc.
+        Create a new user on the backend.
+
+        The user details are taken from `specification` which must include at least
+        the fields returned by the get_required_user_creation_fields.
+
+        :param specification: The specification describing the to be created user.
         """
         raise NotImplementedError
 
     def delete_user(self, user, **kwargs):
         """
-        TODO: write doc.
+        Delete the user from the backend.
+
+        :param user: The user to delete.
         """
         raise NotImplementedError
 
@@ -586,31 +607,41 @@ class UserBackend(Backend):
 
     def get_user(self, user, **kwargs):
         """
-        TODO: write doc.
+        Get information about a specific user.
+
+        :param user: The user to get the information for.
         """
         raise NotImplementedError
 
     def get_users(self, **kwargs):
         """
-        TODO: write doc.
+        Get a list of all users the backend stores.
         """
         raise NotImplementedError
 
     def rename_user(self, user, new_name, **kwargs):
         """
-        TODO: write doc.
+        Rename the user.
+
+        :param user: The user to rename.
+        :param new_name: The user's new name.
         """
         raise NotImplementedError
 
-    def set_user_password(self, user, password, **kwargs):
+    def set_user_credentials(self, user, credentials, **kwargs):
         """
-        TODO: write doc.
+        Set/update the user's credentials stored in the backend.
+
+        :param user: The user for which the credentials should be updated.
+        :param credentials: The new credentials (i.e. a new password).
         """
         raise NotImplementedError
 
     def user_exists(self, user):
         """
-        TODO: write doc.
+        Check if the user exists.
+
+        :param user: The user to check existance of.
         """
         try:
             self.get_user(user)

@@ -155,6 +155,15 @@ class UserBackendError(BackendError):
         return repr(self.value)
 
 
+class ReadOnlyError(UserBackendError):
+
+    """
+    Error indicating that a user cannot be updated because the backend is read-only.
+    """
+
+    pass
+
+
 class UserNotFoundError(NotFoundError, UserBackendError):
 
     """
@@ -166,13 +175,6 @@ class UserNotFoundError(NotFoundError, UserBackendError):
 
     def __str__(self):
         return "User %s not found" % repr(self.user)
-
-
-class ReadOnlyError(UserBackendError):
-    '''
-    Backend error type for users/groups backends.
-    '''
-    pass
 
 
 class ServiceError(Exception):

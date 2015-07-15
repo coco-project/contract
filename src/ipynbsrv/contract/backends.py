@@ -29,6 +29,21 @@ class ContainerBackend(Backend):
     """
 
     """
+    Status for the backend if it doesn't work due to an error.
+    """
+    BACKEND_STATUS_ERROR = 0
+
+    """
+    Status for the backend if everything is working.
+    """
+    BACKEND_STATUS_OK = 1
+
+    """
+    Status for the backend if it is stopped (i.e. the backend is a daemon).
+    """
+    BACKEND_STATUS_STOPPED = 2
+
+    """
     Key to be used in returns as unique identifier for the container.
     """
     FIELD_PK = 'pk'
@@ -130,6 +145,15 @@ class ContainerBackend(Backend):
         Get a list of fields the backend expects the input objects to the start_container method to have at least.
 
         The list should contain tuples in the form: (name, type)
+        """
+        raise NotImplementedError
+
+    def get_status(self):
+        """
+        Get the status of the container backend.
+
+        The returned value must be one of the BACKEND_STATUS_* fields.
+        If determinating the status fails, no exception should be thrown - never.
         """
         raise NotImplementedError
 
@@ -569,14 +593,6 @@ class UserBackend(Backend):
         Establish the connection to the user backend with the given credentials.
 
         :param credentials: The login credentials for the backend.
-        """
-        raise NotImplementedError
-
-    def validate_login(self, credentials, **kwargs):
-        """
-        Check if the provided credentials are valid.
-
-        :param credentials: The login credentials for the backend to validate
         """
         raise NotImplementedError
 

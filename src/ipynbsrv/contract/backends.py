@@ -403,6 +403,14 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_group(self, group, **kwargs):
+        """
+        Get information about a specific user.
+
+        :param group: The group to get the information for.
+        """
+        raise NotImplementedError
+
     def get_required_group_creation_fields(self):
         """
         Get a list of fields the backend expects the input objects to the create_group method to have at least.

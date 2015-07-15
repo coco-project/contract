@@ -1,4 +1,17 @@
-class BackendError(Exception):
+class Error(Exception):
+
+    """
+    Base error for all ipynbsrv exceptions.
+
+    Only when throwing an instance of this error one can be sure it
+    will get caught by the application. All other exceptions might
+    be unhandled leading to crashes.
+    """
+
+    pass
+
+
+class BackendError(Error):
 
     """
     Base error for all backend exceptions.

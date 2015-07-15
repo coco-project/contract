@@ -429,7 +429,7 @@ class GroupBackend(Backend):
 
     def get_group(self, group, **kwargs):
         """
-        Get information about a specific user.
+        Get information about a specific group.
 
         :param group: The group to get the information for.
         """

@@ -104,11 +104,7 @@ class GroupBackendError(BackendError):
     Backend error type for user backends.
     """
 
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+    pass
 
 
 class GroupNotFoundError(NotFoundError, GroupBackendError):
@@ -117,11 +113,7 @@ class GroupNotFoundError(NotFoundError, GroupBackendError):
     Error meant to be raised when a group does not exist.
     """
 
-    def __init__(self, group):
-        self.group = group
-
-    def __str__(self):
-        return 'Group not found: {0}'.format(repr(self.group))
+    pass
 
 
 class StorageBackendError(BackendError):
@@ -148,11 +140,7 @@ class UserBackendError(BackendError):
     Backend error type for user backends.
     """
 
-    def __init__(self, value):
-        self.value = value
-
-    def __str__(self):
-        return repr(self.value)
+    pass
 
 
 class ReadOnlyError(UserBackendError):
@@ -164,17 +152,22 @@ class ReadOnlyError(UserBackendError):
     pass
 
 
+class AuthenticationError(UserBackendError):
+
+    """
+    Error meant to be raised when there is a problem while authenticating.
+    """
+
+    pass
+
+
 class UserNotFoundError(NotFoundError, UserBackendError):
 
     """
     Error meant to be raised when a user does not exist.
     """
 
-    def __init__(self, user):
-        self.user = user
-
-    def __str__(self):
-        return "User %s not found" % repr(self.user)
+    pass
 
 
 class ServiceError(Exception):

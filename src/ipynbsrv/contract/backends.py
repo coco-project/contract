@@ -1,4 +1,4 @@
-from ipynbsrv.contract.errors import DirectoryNotFoundError, UserNotFoundError
+from ipynbsrv.contract.errors import DirectoryNotFoundError
 import os
 
 

@@ -388,14 +388,14 @@ class GroupBackend(Backend):
 
     Most of the time, this might be the same as FIELD_GROUP_PK.
     """
-    FIELD_USER_ID = 'id'
+    FIELD_ID = 'id'
 
     """
     Key to be used in returns as unique identifier for the group.
     """
-    FIELD_GROUP_PK = 'pk'
+    FIELD_PK = 'pk'
 
-    def add_user_to_group(self, user, group, **kwargs):
+    def add_group_member(self, group, user, **kwargs):
         """
         TODO: write doc.
         """
@@ -435,6 +435,20 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_group_members(self, group, **kwargs):
+        """
+        Get a list of all members within the given group.
+
+        :param group: The group to get the members of.
+        """
+        raise NotImplementedError
+
+    def get_groups(self, **kwargs):
+        """
+        Get a list of all groups.
+        """
+        raise NotImplementedError
+
     def get_required_group_creation_fields(self):
         """
         Get a list of fields the backend expects the input objects to the create_group method to have at least.
@@ -443,13 +457,15 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
-    def get_users_by_group(self, group, **kwargs):
+    def group_exists(self, group, **kwargs):
         """
-        TODO: write doc.
+        Check if the group exists.
+
+        :param group: The group to check existance of.
         """
         raise NotImplementedError
 
-    def remove_user_from_group(self, user, group, **kwargs):
+    def remove_group_member(self, group, user, **kwargs):
         """
         TODO: write doc.
         """
@@ -581,12 +597,25 @@ class UserBackend(Backend):
 
     Most of the time, this might be the same as FIELD_USER_PK.
     """
-    FIELD_USER_ID = 'id'
+    FIELD_ID = 'id'
 
     """
     Key to be used in returns as unique identifier for the user.
     """
-    FIELD_USER_PK = 'pk'
+    FIELD_PK = 'pk'
+
+    def auth_user(self, user, credential, **kwargs):
+        """
+        Validate that the given user exists and the credential (e.g. password) is correct.
+
+        If the user does not exist, an `ipynbsrv.contract.errors.UserNotFoundError` should be raised.
+        If the authentication failed, an an `ipynbsrv.contract.errors.AuthenticationError` should be raised.
+        If the authentication went well, the user should be returned.
+
+        :param user: The user to validate.
+        :param credential: The credential identifiying the user.
+        """
+        raise NotImplementedError
 
     def connect(self, credentials, **kwargs):
         """
@@ -652,12 +681,12 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
-    def set_user_credentials(self, user, credentials, **kwargs):
+    def set_user_credential(self, user, credential, **kwargs):
         """
-        Set/update the user's credentials stored in the backend.
+        Set/update the user's credential stored in the backend.
 
         :param user: The user for which the credentials should be updated.
-        :param credentials: The new credentials (i.e. a new password).
+        :param credential: The new credential (i.e. a new password).
         """
         raise NotImplementedError
 
@@ -666,18 +695,5 @@ class UserBackend(Backend):
         Check if the user exists.
 
         :param user: The user to check existance of.
-        """
-        try:
-            self.get_user(user)
-            return True
-        except UserNotFoundError:
-            return False
-
-    def validate_login(self, user, credentials, **kwargs):
-        """
-        Validate that the given user exists and the credentials (e.g. password) are correct.
-
-        :param user: The user to validate.
-        :param credentials: The credentials identifiying the user.
         """
         raise NotImplementedError

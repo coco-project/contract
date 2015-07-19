@@ -465,9 +465,12 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
-    def remove_user_from_all_groups(self, user, **kwargs):
+    def is_group_member(self, group, user, **kwargs):
         """
-        Iterate over all groups and remove `user` if he is a member.
+        Check if the user is a member of the given group.
+
+        :param group: The group to check membership of.
+        :param user: The user to check.
         """
         raise NotImplementedError
 
@@ -477,9 +480,11 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
-    def rename_group(self, group, new_name, **kwargs):
+    def remove_user_from_all_groups(self, user, **kwargs):
         """
-        TODO: write doc.
+        Remove the user from all groups he belongs to.
+
+        :param user: The user for which all memberships should be removed.
         """
         raise NotImplementedError
 
@@ -710,15 +715,6 @@ class UserBackend(Backend):
     def get_users(self, **kwargs):
         """
         Get a list of all users the backend stores.
-        """
-        raise NotImplementedError
-
-    def rename_user(self, user, new_name, **kwargs):
-        """
-        Rename the user.
-
-        :param user: The user to rename.
-        :param new_name: The user's new name.
         """
         raise NotImplementedError
 

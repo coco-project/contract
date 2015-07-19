@@ -156,19 +156,19 @@ class UserBackendError(BackendError):
     pass
 
 
-class ReadOnlyError(UserBackendError):
+class AuthenticationError(UserBackendError):
 
     """
-    Error indicating that a user cannot be updated because the backend is read-only.
+    Error meant to be raised when there is a problem while authenticating.
     """
 
     pass
 
 
-class AuthenticationError(UserBackendError):
+class ReadOnlyError(UserBackendError):
 
     """
-    Error meant to be raised when there is a problem while authenticating.
+    Error indicating that a user cannot be updated because the backend is read-only.
     """
 
     pass

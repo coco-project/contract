@@ -449,6 +449,12 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
+    def remove_user_from_all_groups(self, user, **kwargs):
+        """
+        Iterate over all groups and remove `user` if he is a member.
+        """
+        raise NotImplementedError
+
     def remove_user_from_group(self, user, group, **kwargs):
         """
         TODO: write doc.

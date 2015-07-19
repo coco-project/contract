@@ -508,6 +508,14 @@ class StorageBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_dir_gid(self, dir_name, **kwargs):
+        """
+        Get the group identifier (numeric) of the group owning the directory.
+
+        :param dir_name: The directory to get the group for.
+        """
+        raise NotImplementedError
+
     def get_dir_group(self, dir_name, **kwargs):
         """
         Get the group identifier of the group owning the directory.
@@ -532,6 +540,14 @@ class StorageBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_dir_uid(self, dir_name, **kwargs):
+        """
+        Get the user identifier (numeric) of the user owning the directory.
+
+        :param dir_name: The directory to get the owner for.
+        """
+        raise NotImplementedError
+
     def get_full_dir_path(self, dir_name, **kwargs):
         """
         Get the absolute/full path for the directory.
@@ -548,11 +564,21 @@ class StorageBackend(Backend):
         """
         raise NotImplementedError
 
-    def rm_dir(self, dir_name, **kwargs):
+    def rm_dir(self, dir_name, recursive=False, **kwargs):
         """
         Delete the directory from the storage backend.
 
         :param dir_name: The name of the directory to delete.
+        :param recursive: Either to delete recursive or not.
+        """
+        raise NotImplementedError
+
+    def set_dir_gid(self, dir_name, gid, **kwargs):
+        """
+        Set the directory's primary group by numeric ID.
+
+        :param dir_name: The directory to set the group on.
+        :param gid: The numeric group ID.
         """
         raise NotImplementedError
 
@@ -580,6 +606,15 @@ class StorageBackend(Backend):
 
         :param dir_name: The directory to set the group on.
         :param owner: The user to set as an owner.
+        """
+        raise NotImplementedError
+
+    def set_dir_uid(self, dir_name, uid, **kwargs):
+        """
+        Set the directory's owner by numeric ID.
+
+        :param dir_name: The directory to set the group on.
+        :param uid: The user's numeric ID.
         """
         raise NotImplementedError
 

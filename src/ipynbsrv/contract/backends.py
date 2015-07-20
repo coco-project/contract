@@ -44,12 +44,12 @@ class ContainerBackend(Backend):
     BACKEND_STATUS_STOPPED = 2
 
     """
-    Key to be used in returns as unique identifier for the container.
+    Key to be used in returns as unique identifier for the resource.
     """
     FIELD_PK = 'pk'
 
     """
-    Key to be used for the value storing the status (see below) of the container..
+    Key to be used for the value storing the status (see below) of the resource.
     """
     FIELD_STATUS = 'status'
 
@@ -79,15 +79,25 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_container(self, specification, **kwargs):
+    def create_container(self, name, image, ports, volumes, cmd=None, **kwargs):
         """
         Create a new container instance.
 
-        Implementations are free to either use the specification argument or kwargs
-        for input arguments.
-        Required fields should however be included in the specification.
+        :param name: The name of the to be created container.
+        :param image: The bootstrap image/template to use.
+        :param ports: The ports that need to be available from the outside.
+        :param volumes: The volumes to mount inside the container.
+        :param cmd: An optional command to execute inside the container.
 
-        :param specification: The specification of the to be created container.
+        :return The created container, as it would be returned with `get_container`.
+        """
+        raise NotImplementedError
+
+    def create_image(self, specification, **kwargs):  # TODO: arguments
+        """
+        Create a new image from the specification.
+
+        :param specification: The specification for the new image.
         """
         raise NotImplementedError
 
@@ -96,6 +106,14 @@ class ContainerBackend(Backend):
         Delete the container.
 
         :param container: The container to delete.
+        """
+        raise NotImplementedError
+
+    def delete_image(self, image, **kwargs):
+        """
+        Delete the container image.
+
+        :param image: The image to delete.
         """
         raise NotImplementedError
 
@@ -132,12 +150,34 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_image(self, image, **kwargs):
+        """
+        Get information about the requested image.
+
+        :param image: The image to get.
+        """
+        raise NotImplementedError
+
+    def get_images(self, **kwargs):
+        """
+        Get a list of available container images.
+        """
+        raise NotImplementedError
+
     def get_status(self):
         """
         Get the status of the container backend.
 
         The returned value must be one of the BACKEND_STATUS_* fields.
         If determinating the status fails, no exception should be thrown - never.
+        """
+        raise NotImplementedError
+
+    def image_exists(self, image):
+        """
+        Check if the image exists on the backend.
+
+        :param image: The image to check for.
         """
         raise NotImplementedError
 
@@ -179,59 +219,11 @@ class CloneableContainerBackend(ContainerBackend):
     by providing a way to duplicate (clone) existing containers.
     """
 
-    def clone_container(self, container, **kwargs):
+    def clone_container(self, container, **kwargs):  # TODO: arguments
         """
         Clone the container and returns the newly created one (clone).
 
         :param container: The container to clone.
-        """
-        raise NotImplementedError
-
-
-class ImageBasedContainerBackend(ContainerBackend):
-
-    """
-    Extended ContainerBackend providing image-based containers.
-
-    The image based container backend interface can be implemented by container backends
-    to signalize that they are image/template based.
-    """
-
-    def create_image(self, specification, **kwargs):
-        """
-        Create a new image from the specification.
-
-        :param specification: The specification for the new image.
-        """
-        raise NotImplementedError
-
-    def delete_image(self, image, **kwargs):
-        """
-        Delete the container image.
-
-        :param image: The image to delete.
-        """
-        raise NotImplementedError
-
-    def get_image(self, image, **kwargs):
-        """
-        Get information about the requested image.
-
-        :param image: The image to get.
-        """
-        raise NotImplementedError
-
-    def get_images(self, **kwargs):
-        """
-        Get a list of available container images.
-        """
-        raise NotImplementedError
-
-    def image_exists(self, image):
-        """
-        Check if the image exists on the backend.
-
-        :param image: The image to check for.
         """
         raise NotImplementedError
 
@@ -254,16 +246,12 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def create_container_snapshot(self, container, specification, **kwargs):
+    def create_container_snapshot(self, container, name, **kwargs):
         """
         Create a snapshop of the container.
 
-        Implementations are free to either use the specification argument or kwargs
-        for input arguments.
-        Required fields should however be included in the specification.
-
         :param container: The container to snapshot.
-        :param specification: The specification of the to be created snapshot.
+        :param name: The name of the to be created snapshot.
         """
         raise NotImplementedError
 

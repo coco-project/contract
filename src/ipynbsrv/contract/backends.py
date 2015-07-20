@@ -132,22 +132,6 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def get_required_container_cretion_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_container method to have at least.
-
-        The list should contain tuples in the form: (name, type)
-        """
-        raise NotImplementedError
-
-    def get_required_container_start_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the start_container method to have at least.
-
-        The list should contain tuples in the form: (name, type)
-        """
-        raise NotImplementedError
-
     def get_status(self):
         """
         Get the status of the container backend.
@@ -243,14 +227,6 @@ class ImageBasedContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def get_required_image_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_image method to have at least.
-
-        The list should contain tuples in the form: (name, type)
-        """
-        raise NotImplementedError
-
     def image_exists(self, image):
         """
         Check if the image exists on the backend.
@@ -314,14 +290,6 @@ class SnapshotableContainerBackend(ContainerBackend):
         Get a list of snapshots for the given container.
 
         :param container: The container to get the snapshots for.
-        """
-        raise NotImplementedError
-
-    def get_required_snapshot_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_container_snapshot method to have at least.
-
-        The list should contain tuples in the form: (name, type)
         """
         raise NotImplementedError
 
@@ -446,14 +414,6 @@ class GroupBackend(Backend):
     def get_groups(self, **kwargs):
         """
         Get a list of all groups.
-        """
-        raise NotImplementedError
-
-    def get_required_group_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_group method to have at least.
-
-        The list should contain tuples in the form: (name, type)
         """
         raise NotImplementedError
 
@@ -688,14 +648,6 @@ class UserBackend(Backend):
     def disconnect(self, **kwargs):
         """
         Disconnect from the user backend server.
-        """
-        raise NotImplementedError
-
-    def get_required_user_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_user method to have at least.
-
-        The list should contain tuples in the form: (name, type)
         """
         raise NotImplementedError
 

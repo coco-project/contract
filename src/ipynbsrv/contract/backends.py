@@ -93,6 +93,16 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
+    def container_image_exists(self, image):
+        """
+        Check if the image exists on the backend.
+
+        :param image: The image to check for.
+
+        :return bool `True` if the image exists, `False` otherwise.
+        """
+        raise NotImplementedError
+
     def container_is_running(self, container, **kwargs):
         """
         Return true if the container is running.
@@ -107,7 +117,11 @@ class ContainerBackend(Backend):
         """
         Create a new container instance.
 
+        TODO: improve documentation
+
         :param name: The name of the to be created container.
+                     It will be in the form 'u$user_id-$name'.
+                     Unique constraint: (`user`, `name`)
         :param image: The bootstrap image/template to use.
         :param ports: The ports that need to be available from the outside.
         :param volumes: The volumes to mount inside the container.
@@ -136,7 +150,7 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def delete_image(self, image, force=False, **kwargs):
+    def delete_container_image(self, image, force=False, **kwargs):
         """
         Delete the container image.
 
@@ -162,7 +176,21 @@ class ContainerBackend(Backend):
 
         :param container: The container to get the information of.
 
-        :return dict A dict describing the container (including at least all the `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` fields).
+        :return dict A dict describing the container.
+                     At least all the `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` field
+                     must be in this dict.
+        """
+        raise NotImplementedError
+
+    def get_container_image(self, image, **kwargs):
+        """
+        Get information about the requested image.
+
+        :param image: The image to get.
+
+        :return dict A dict describing the image.
+                     At least all the `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` field
+                     must be in this dict.
         """
         raise NotImplementedError
 
@@ -176,6 +204,14 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_container_images(self, **kwargs):
+        """
+        Get a list of available container images.
+
+        :return list A list of all images (each entry as with `get_image`).
+        """
+        raise NotImplementedError
+
     def get_container_port_mappings(self, container, **kwargs):
         """
         Return the container's port mappings.
@@ -183,6 +219,7 @@ class ContainerBackend(Backend):
         :param container: The container to get the mappings for.
 
         :return list A list of dicts describing the port mappings.
+                     Each entry must include the `ContainerBackend.PORT_MAPPING_KEY_*` fields.
         """
 
     def get_containers(self, only_running=False, **kwargs):
@@ -195,24 +232,6 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def get_image(self, image, **kwargs):
-        """
-        Get information about the requested image.
-
-        :param image: The image to get.
-
-        :return dict A dict describing the image (including at least all the `ContainerBackend.KEY_*` and `ContainerBackend.IMAGE_KEY_*` fields).
-        """
-        raise NotImplementedError
-
-    def get_images(self, **kwargs):
-        """
-        Get a list of available container images.
-
-        :return list A list of all images (each entry as with `get_image`).
-        """
-        raise NotImplementedError
-
     def get_status(self):
         """
         Get the status of the container backend.
@@ -221,16 +240,6 @@ class ContainerBackend(Backend):
         If determinating the status fails, no exception should be thrown - never.
 
         :return ContainerBackend.STATUS_* The container backend's status.
-        """
-        raise NotImplementedError
-
-    def image_exists(self, image):
-        """
-        Check if the image exists on the backend.
-
-        :param image: The image to check for.
-
-        :return bool `True` if the image exists, `False` otherwise.
         """
         raise NotImplementedError
 
@@ -306,6 +315,9 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         Create a snapshop of the container.
 
+        The `name` is passed in as entered by the user.
+        Concreate backends need to ensure uniqueness is garanteed for: (`container`, `name`).
+
         :param container: The container to snapshot.
         :param name: The name of the to be created snapshot.
 
@@ -328,7 +340,8 @@ class SnapshotableContainerBackend(ContainerBackend):
 
         :param snapshot: The snapshot to get information for.
 
-        :return dict A dict describing the container snapshot (including at least all the `ContainerBackend.KEY_*` and `SnapshotableContainerBackend.SNAPSHOT_KEY_*` fields).
+        :return dict A dict describing the container snapshot.
+                     At least all the `ContainerBackend.KEY_*` fields must be in this dict.
         """
         raise NotImplementedError
 

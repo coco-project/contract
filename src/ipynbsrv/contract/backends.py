@@ -131,13 +131,14 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_container_image(self, specification, **kwargs):  # TODO: arguments
+    def create_container_image(self, container, name, **kwargs):  # TODO: arguments
         """
-        Create a new image from the specification.
+        Create a new image based on `container` with name `name`.
 
-        :param specification: The specification for the new image.
+        :param container: The container acting as a base for the image.
+        :param name: The name of the image to create.
 
-        :return The created image, as it would be returned with `get_image`.
+        :return The created image, as it would be returned with `get_container_image`.
         """
         raise NotImplementedError
 
@@ -194,6 +195,14 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
+    def get_container_images(self, **kwargs):
+        """
+        Get a list of available container images.
+
+        :return list A list of all images (each entry as with `get_image`).
+        """
+        raise NotImplementedError
+
     def get_container_logs(self, container, **kwargs):
         """
         Get the logging output of the container.
@@ -201,14 +210,6 @@ class ContainerBackend(Backend):
         :param container: The container to get the information of.
 
         :return list The list of log messages for this container.
-        """
-        raise NotImplementedError
-
-    def get_container_images(self, **kwargs):
-        """
-        Get a list of available container images.
-
-        :return list A list of all images (each entry as with `get_image`).
         """
         raise NotImplementedError
 

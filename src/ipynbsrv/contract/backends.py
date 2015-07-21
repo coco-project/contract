@@ -162,8 +162,7 @@ class ContainerBackend(Backend):
 
         :param container: The container to get the information of.
 
-        :return dict A dict describing the container (including at least all the
-                     `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` fields).
+        :return dict A dict describing the container (including at least all the `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` fields).
         """
         raise NotImplementedError
 
@@ -202,8 +201,7 @@ class ContainerBackend(Backend):
 
         :param image: The image to get.
 
-        :return dict A dict describing the image (including at least all the
-                     `ContainerBackend.KEY_*` and `ContainerBackend.IMAGE_KEY_*` fields).
+        :return dict A dict describing the image (including at least all the `ContainerBackend.KEY_*` and `ContainerBackend.IMAGE_KEY_*` fields).
         """
         raise NotImplementedError
 
@@ -294,12 +292,16 @@ class SnapshotableContainerBackend(ContainerBackend):
     by providing a way to snapshot/commit an existing container.
     """
 
-    def container_snapshot_exists(self, container, snapshot, **kwargs):
+    """
+    Key to be used for the value storing the snapshot's name.
+    """
+    SNAPSHOT_KEY_NAME = 'name'
+
+    def container_snapshot_exists(self, snapshot, **kwargs):
         """
         Check if a snapshot with the given name exists for the container.
 
-        :param container: The container to check.
-        :param name: The name of the snapshot to check.
+        :param snapshot: The snapshot to check.
 
         :return bool `True` if the snapshot exists, `False` otherwise.
         """
@@ -316,35 +318,38 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def delete_container_snapshot(self, container, snapshot, force=False, **kwargs):
+    def delete_container_snapshot(self, snapshot, force=False, **kwargs):
         """
         Delete the container's snapshot.
 
-        :param container: The container to act on.
         :param snapshot: The snapshot to delete.
         :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
-    def get_container_snapshot(self, container, snapshot, **kwargs):
+    def get_container_snapshot(self, snapshot, **kwargs):
         """
         Get information about the container's snapshot.
 
-        :param container: The container to get the snapshots for.
         :param snapshot: The snapshot to get information for.
 
-        :return dict A dict describing the container snapshot (including at least all the
-                     `ContainerBackend.KEY_*` and `SnapshotableContainerBackend.SNAPSHOT_KEY_*` fields).
+        :return dict A dict describing the container snapshot (including at least all the `ContainerBackend.KEY_*` and `SnapshotableContainerBackend.SNAPSHOT_KEY_*` fields).
         """
         raise NotImplementedError
 
-    def get_container_snapshots(self, container, **kwargs):
+    def get_container_snapshots(self, **kwargs):
         """
-        Get a list of snapshots for the given container.
+        Get a list of containers' snapshots.
 
-        :param container: The container to get the snapshots for.
+        :return list A list of all containers' snapshots (each entry as with `get_container_snapshot`).
+        """
+        raise NotImplementedError
 
-        :return list A list of all container's snapshots (each entry as with `get_container_snapshot`).
+    def get_containers_snapshots(self, container, **kwargs):
+        """
+        Get a list of the container's snapshots.
+
+        :return list A list of the container's snapshots (each entry as with `get_container_snapshot`).
         """
         raise NotImplementedError
 

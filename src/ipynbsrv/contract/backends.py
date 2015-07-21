@@ -29,45 +29,67 @@ class ContainerBackend(Backend):
     """
 
     """
-    Status for the backend if it doesn't work due to an error.
-    """
-    BACKEND_STATUS_ERROR = 0
-
-    """
     Status for the backend if everything is working.
     """
-    BACKEND_STATUS_OK = 1
+    BACKEND_STATUS_OK = 0
 
     """
     Status for the backend if it is stopped (i.e. the backend is a daemon).
     """
-    BACKEND_STATUS_STOPPED = 2
+    BACKEND_STATUS_STOPPED = 1
 
     """
-    Key to be used in returns as unique identifier for the container.
+    Status for the backend if it doesn't work due to an error.
     """
-    FIELD_PK = 'pk'
+    BACKEND_STATUS_ERROR = 2
 
     """
-    Key to be used for the value storing the status (see below) of the container..
+    Key to be used for the value storing the container's port mappings.
     """
-    FIELD_STATUS = 'status'
+    CONTAINER_KEY_PORT_MAPPINGS = 'port_mappings'
+
+    """
+    Key to be used for the value storing the status (see below) of the container.
+    """
+    CONTAINER_KEY_STATUS = 'status'
 
     """
     String to be used in the 'status' field for a running container.
     """
-    STATUS_RUNNING = 'running'
+    CONTAINER_STATUS_RUNNING = 'running'
 
     """
     String to be used in the 'status' field for a stopped container.
     """
-    STATUS_STOPPED = 'stopped'
+    CONTAINER_STATUS_STOPPED = 'stopped'
+
+    """
+    Key to be used in returns as unique identifier for the resource.
+    """
+    KEY_PK = 'pk'
+
+    """
+    Key to be used for the value storing the address of the port mapping.
+    """
+    PORT_MAPPING_KEY_ADDRESS = 'address'
+
+    """
+    Key to be used for the value storing the external port of the port mapping.
+    """
+    PORT_MAPPING_KEY_EXTERNAL = 'external'
+
+    """
+    Key to be used for the value storing the internal port of the port mapping.
+    """
+    PORT_MAPPING_KEY_INTERNAL = 'internal'
 
     def container_exists(self, container, **kwargs):
         """
         Check if the given container exists in the backend.
 
         :param container: The container to check.
+
+        :return bool `True` if the container exists, `False` otherwise.
         """
         raise NotImplementedError
 
@@ -76,26 +98,50 @@ class ContainerBackend(Backend):
         Return true if the container is running.
 
         :param container: The container to check.
+
+        :return bool `True` if the container is running, `False` otherwise.
         """
         raise NotImplementedError
 
-    def create_container(self, specification, **kwargs):
+    def create_container(self, name, image, ports, volumes, cmd=None, **kwargs):
         """
         Create a new container instance.
 
-        Implementations are free to either use the specification argument or kwargs
-        for input arguments.
-        Required fields should however be included in the specification.
+        :param name: The name of the to be created container.
+        :param image: The bootstrap image/template to use.
+        :param ports: The ports that need to be available from the outside.
+        :param volumes: The volumes to mount inside the container.
+        :param cmd: An optional command to execute inside the container.
 
-        :param specification: The specification of the to be created container.
+        :return The created container, as it would be returned with `get_container`.
         """
         raise NotImplementedError
 
-    def delete_container(self, container, **kwargs):
+    def create_image(self, specification, **kwargs):  # TODO: arguments
+        """
+        Create a new image from the specification.
+
+        :param specification: The specification for the new image.
+
+        :return The created image, as it would be returned with `get_image`.
+        """
+        raise NotImplementedError
+
+    def delete_container(self, container, force=False, **kwargs):
         """
         Delete the container.
 
         :param container: The container to delete.
+        :param force: Either to force the deletion or not.
+        """
+        raise NotImplementedError
+
+    def delete_image(self, image, force=False, **kwargs):
+        """
+        Delete the container image.
+
+        :param image: The image to delete.
+        :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
@@ -105,6 +151,8 @@ class ContainerBackend(Backend):
 
         :param container: The container to execute the command in.
         :param cmd: The command to execute.
+
+        :return str The output returned by the command.
         """
         raise NotImplementedError
 
@@ -113,6 +161,9 @@ class ContainerBackend(Backend):
         Get information about the requested container.
 
         :param container: The container to get the information of.
+
+        :return dict A dict describing the container (including at least all the
+                     `ContainerBackend.KEY_*` and `ContainerBackend.CONTAINER_KEY_*` fields).
         """
         raise NotImplementedError
 
@@ -121,30 +172,46 @@ class ContainerBackend(Backend):
         Get the logging output of the container.
 
         :param container: The container to get the information of.
+
+        :return list The list of log messages for this container.
         """
         raise NotImplementedError
+
+    def get_container_port_mappings(self, container, **kwargs):
+        """
+        Return the container's port mappings.
+
+        :param container: The container to get the mappings for.
+
+        :return list A list of dicts describing the port mappings.
+        """
 
     def get_containers(self, only_running=False, **kwargs):
         """
         Get a list of all containers.
 
         :param only_running: If true, only running containers are returned.
+
+        :return list A list of all containers (each entry as with `get_container`).
         """
         raise NotImplementedError
 
-    def get_required_container_cretion_fields(self):
+    def get_image(self, image, **kwargs):
         """
-        Get a list of fields the backend expects the input objects to the create_container method to have at least.
+        Get information about the requested image.
 
-        The list should contain tuples in the form: (name, type)
+        :param image: The image to get.
+
+        :return dict A dict describing the image (including at least all the
+                     `ContainerBackend.KEY_*` and `ContainerBackend.IMAGE_KEY_*` fields).
         """
         raise NotImplementedError
 
-    def get_required_container_start_fields(self):
+    def get_images(self, **kwargs):
         """
-        Get a list of fields the backend expects the input objects to the start_container method to have at least.
+        Get a list of available container images.
 
-        The list should contain tuples in the form: (name, type)
+        :return list A list of all images (each entry as with `get_image`).
         """
         raise NotImplementedError
 
@@ -154,6 +221,18 @@ class ContainerBackend(Backend):
 
         The returned value must be one of the BACKEND_STATUS_* fields.
         If determinating the status fails, no exception should be thrown - never.
+
+        :return ContainerBackend.STATUS_* The container backend's status.
+        """
+        raise NotImplementedError
+
+    def image_exists(self, image):
+        """
+        Check if the image exists on the backend.
+
+        :param image: The image to check for.
+
+        :return bool `True` if the image exists, `False` otherwise.
         """
         raise NotImplementedError
 
@@ -195,67 +274,13 @@ class CloneableContainerBackend(ContainerBackend):
     by providing a way to duplicate (clone) existing containers.
     """
 
-    def clone_container(self, container, **kwargs):
+    def clone_container(self, container, **kwargs):  # TODO: arguments
         """
         Clone the container and returns the newly created one (clone).
 
         :param container: The container to clone.
-        """
-        raise NotImplementedError
 
-
-class ImageBasedContainerBackend(ContainerBackend):
-
-    """
-    Extended ContainerBackend providing image-based containers.
-
-    The image based container backend interface can be implemented by container backends
-    to signalize that they are image/template based.
-    """
-
-    def create_image(self, specification, **kwargs):
-        """
-        Create a new image from the specification.
-
-        :param specification: The specification for the new image.
-        """
-        raise NotImplementedError
-
-    def delete_image(self, image, **kwargs):
-        """
-        Delete the container image.
-
-        :param image: The image to delete.
-        """
-        raise NotImplementedError
-
-    def get_image(self, image, **kwargs):
-        """
-        Get information about the requested image.
-
-        :param image: The image to get.
-        """
-        raise NotImplementedError
-
-    def get_images(self, **kwargs):
-        """
-        Get a list of available container images.
-        """
-        raise NotImplementedError
-
-    def get_required_image_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_image method to have at least.
-
-        The list should contain tuples in the form: (name, type)
-        """
-        raise NotImplementedError
-
-    def image_exists(self, image):
-        """
-        Check if the image exists on the backend.
-
-        :param image: The image to check for.
+        :return dict The cloned container (as it would be returned with `get_container`).
         """
         raise NotImplementedError
 
@@ -275,28 +300,29 @@ class SnapshotableContainerBackend(ContainerBackend):
 
         :param container: The container to check.
         :param name: The name of the snapshot to check.
+
+        :return bool `True` if the snapshot exists, `False` otherwise.
         """
         raise NotImplementedError
 
-    def create_container_snapshot(self, container, specification, **kwargs):
+    def create_container_snapshot(self, container, name, **kwargs):
         """
         Create a snapshop of the container.
 
-        Implementations are free to either use the specification argument or kwargs
-        for input arguments.
-        Required fields should however be included in the specification.
-
         :param container: The container to snapshot.
-        :param specification: The specification of the to be created snapshot.
+        :param name: The name of the to be created snapshot.
+
+        :return dict The container snapshot (as it would be returned with `get_container_snapshot`).
         """
         raise NotImplementedError
 
-    def delete_container_snapshot(self, container, snapshot, **kwargs):
+    def delete_container_snapshot(self, container, snapshot, force=False, **kwargs):
         """
         Delete the container's snapshot.
 
         :param container: The container to act on.
         :param snapshot: The snapshot to delete.
+        :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
@@ -306,6 +332,9 @@ class SnapshotableContainerBackend(ContainerBackend):
 
         :param container: The container to get the snapshots for.
         :param snapshot: The snapshot to get information for.
+
+        :return dict A dict describing the container snapshot (including at least all the
+                     `ContainerBackend.KEY_*` and `SnapshotableContainerBackend.SNAPSHOT_KEY_*` fields).
         """
         raise NotImplementedError
 
@@ -314,14 +343,8 @@ class SnapshotableContainerBackend(ContainerBackend):
         Get a list of snapshots for the given container.
 
         :param container: The container to get the snapshots for.
-        """
-        raise NotImplementedError
 
-    def get_required_snapshot_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_container_snapshot method to have at least.
-
-        The list should contain tuples in the form: (name, type)
+        :return list A list of all container's snapshots (each entry as with `get_container_snapshot`).
         """
         raise NotImplementedError
 
@@ -348,13 +371,15 @@ class SuspendableContainerBackend(ContainerBackend):
     """
     String to be used in the 'status' field for a stopped container.
     """
-    STATUS_SUSPENDED = 'suspended'
+    CONTAINER_STATUS_SUSPENDED = 'suspended'
 
     def container_is_suspended(self, container, **kwargs):
         """
         Check if the container is suspended.
 
         :param container: The container to check.
+
+        :return bool `True` if the container is suspended, `False` otherwise.
         """
         raise NotImplementedError
 
@@ -446,14 +471,6 @@ class GroupBackend(Backend):
     def get_groups(self, **kwargs):
         """
         Get a list of all groups.
-        """
-        raise NotImplementedError
-
-    def get_required_group_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_group method to have at least.
-
-        The list should contain tuples in the form: (name, type)
         """
         raise NotImplementedError
 
@@ -693,14 +710,6 @@ class UserBackend(Backend):
     def disconnect(self, **kwargs):
         """
         Disconnect from the user backend server.
-        """
-        raise NotImplementedError
-
-    def get_required_user_creation_fields(self):
-        """
-        Get a list of fields the backend expects the input objects to the create_user method to have at least.
-
-        The list should contain tuples in the form: (name, type)
         """
         raise NotImplementedError
 

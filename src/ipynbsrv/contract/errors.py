@@ -65,18 +65,6 @@ class ContainerNotFoundError(NotFoundError, ContainerBackendError):
     pass
 
 
-class IllegalContainerSpecificationError(ContainerBackendError):
-
-    """
-    Error indicating the provided specification is illegal/invalid.
-
-    Meant to be thrown by methods that fail to execute due to
-    a bad (container) specification as per the various get_required_*_fields methods.
-    """
-
-    pass
-
-
 class IllegalContainerStateError(ContainerBackendError):
 
     """

@@ -292,11 +292,6 @@ class SnapshotableContainerBackend(ContainerBackend):
     by providing a way to snapshot/commit an existing container.
     """
 
-    """
-    Key to be used for the value storing the snapshot's name.
-    """
-    SNAPSHOT_KEY_NAME = 'name'
-
     def container_snapshot_exists(self, snapshot, **kwargs):
         """
         Check if a snapshot with the given name exists for the container.

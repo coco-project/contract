@@ -131,7 +131,7 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_image(self, specification, **kwargs):  # TODO: arguments
+    def create_container_image(self, specification, **kwargs):  # TODO: arguments
         """
         Create a new image from the specification.
 

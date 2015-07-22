@@ -44,6 +44,17 @@ class ContainerBackend(Backend):
     BACKEND_STATUS_ERROR = 2
 
     """
+    Key to be used in the return of `create_container` for the created container
+    if an image has been created for the clone.
+    """
+    CONTAINER_KEY_CLONE_CONTAINER = 'container'
+
+    """
+    Key to be used in the return of `create_container` for the created image (if any).
+    """
+    CONTAINER_KEY_CLONE_IMAGE = 'image'
+
+    """
     Key to be used for the value storing the container's port mappings.
     """
     CONTAINER_KEY_PORT_MAPPINGS = 'port_mappings'
@@ -113,19 +124,25 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_container(self, name, image, ports, volumes, cmd=None, **kwargs):
+    def create_container(self, name, ports, volumes, cmd=None, image=None, clone_of=None, **kwargs):
         """
         Create a new container instance.
 
-        TODO: improve documentation
+        Either `image` or `clone_of` will be set.
+        If `clone_of` is set, the new container needds to be based on that one.
+        If the backend does not support native cloning and an image is created for that purpose,
+        the returned value needs to be modified so it returns a `dict` with the fields
+        `ContainerBackend.CONTAINER_KEY_CLONE_CONTAINER` and `ContainerBackend.CONTAINER_KEY_CLONE_IMAGE` where
+        each of this fields has the value of `get_container` resp. `get_container_image`.
 
         :param name: The name of the to be created container.
                      It will be in the form 'u$user_id-$name'.
                      Unique constraint: (`user`, `name`)
-        :param image: The bootstrap image/template to use.
         :param ports: The ports that need to be available from the outside.
         :param volumes: The volumes to mount inside the container.
         :param cmd: An optional command to execute inside the container.
+        :param image: The bootstrap image/template to use.
+        :param clone_of: The optional PK of the container the to be created one is a clone of.
 
         :return The created container, as it would be returned with `get_container`.
         """
@@ -269,26 +286,6 @@ class ContainerBackend(Backend):
         Stop the container.
 
         :param container: The container to stop.
-        """
-        raise NotImplementedError
-
-
-class CloneableContainerBackend(ContainerBackend):
-
-    """
-    Extended ContainerBackend providing cloning functionality.
-
-    The cloneable container backend extends the regular container backend
-    by providing a way to duplicate (clone) existing containers.
-    """
-
-    def clone_container(self, container, **kwargs):  # TODO: arguments
-        """
-        Clone the container and returns the newly created one (clone).
-
-        :param container: The container to clone.
-
-        :return dict The cloned container (as it would be returned with `get_container`).
         """
         raise NotImplementedError
 

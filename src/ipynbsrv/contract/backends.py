@@ -94,6 +94,16 @@ class ContainerBackend(Backend):
     """
     PORT_MAPPING_KEY_INTERNAL = 'internal'
 
+    """
+    Key to be used for the value storing the volume/bind mount source location.
+    """
+    VOLUME_KEY_SOURCE = 'source'
+
+    """
+    Key to be used for the value storing the volume/bind mount target location.
+    """
+    VOLUME_KEY_TARGET = 'target'
+
     def container_exists(self, container, **kwargs):
         """
         Check if the given container exists in the backend.

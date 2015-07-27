@@ -455,9 +455,12 @@ class GroupBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_group(self, specification, **kwargs):
+    def create_group(self, gid, name, **kwargs):
         """
-        TODO: write doc.
+        Create a new group on the backend.
+
+        :param gid: The group's ID.
+        :param name: The group's name.
         """
         raise NotImplementedError
 
@@ -688,16 +691,16 @@ class UserBackend(Backend):
     """
     FIELD_PK = 'pk'
 
-    def auth_user(self, user, credential, **kwargs):
+    def auth_user(self, user, password, **kwargs):
         """
-        Validate that the given user exists and the credential (e.g. password) is correct.
+        Validate that the given user exists and the password is correct.
 
         If the user does not exist, an `ipynbsrv.contract.errors.UserNotFoundError` should be raised.
         If the authentication failed, an an `ipynbsrv.contract.errors.AuthenticationError` should be raised.
         If the authentication went well, the user should be returned.
 
         :param user: The user to validate.
-        :param credential: The credential identifiying the user.
+        :param password: The user's password.
         """
         raise NotImplementedError
 
@@ -709,14 +712,18 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_user(self, specification, **kwargs):
+    def create_user(self, uid, username, password, gid, home_directory, **kwargs):
         """
         Create a new user on the backend.
 
         The user details are taken from `specification` which must include at least
         the fields returned by the get_required_user_creation_fields.
 
-        :param specification: The specification describing the to be created user.
+        :param uid: The user's ID.
+        :param username: The username identifying the user.
+        :param password: The user's login password.
+        :param gid: The user's primary group's ID.
+        :param home_directory: The user's home directory path.
         """
         raise NotImplementedError
 
@@ -748,12 +755,12 @@ class UserBackend(Backend):
         """
         raise NotImplementedError
 
-    def set_user_credential(self, user, credential, **kwargs):
+    def set_user_password(self, user, password, **kwargs):
         """
-        Set/update the user's credential stored in the backend.
+        Set/update the user's password stored in the backend.
 
         :param user: The user for which the credentials should be updated.
-        :param credential: The new credential (i.e. a new password).
+        :param credential: The new password.
         """
         raise NotImplementedError
 

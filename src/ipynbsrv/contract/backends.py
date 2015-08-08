@@ -271,7 +271,7 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def restart_container(self, container, **kwargs):
+    def restart_container(self, container, force=False, **kwargs):
         """
         Restart the container.
 
@@ -279,9 +279,10 @@ class ContainerBackend(Backend):
         be overriden, since the default implementation does two simple start/stop calls.
 
         :param container: The container to restart.
+        :param force: If `True`, try everything to restart the container.
         """
-        self.stop(force=kwargs.get('force', False))
-        self.start()
+        self.stop_container(container, force)
+        self.start_container(container)
 
     def start_container(self, container):
         """
@@ -291,11 +292,12 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def stop_container(self, container, **kwargs):
+    def stop_container(self, container, force=False, **kwargs):
         """
         Stop the container.
 
         :param container: The container to stop.
+        :param force: If `True`, try everything to stop the container.
         """
         raise NotImplementedError
 
@@ -369,12 +371,13 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def restore_container_snapshot(self, container, snapshot, **kwargs):
+    def restore_container_snapshot(self, container, snapshot, force=False, **kwargs):
         """
         Restore the container's snapshot.
 
         :param container: The container to restore.
         :param snapshot: The snapshot to restore.
+        :param force: If `True`, try everything to restore the container's snapshot.
         """
         raise NotImplementedError
 
@@ -404,19 +407,21 @@ class SuspendableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def resume_container(self, container, **kwargs):
+    def resume_container(self, container, force=False, **kwargs):
         """
         Resume a suspended container.
 
         :param container: The container to resume.
+        :param force: If `True`, try everything to resume the container.
         """
         raise NotImplementedError
 
-    def suspend_container(self, container, **kwargs):
+    def suspend_container(self, container, force=False, **kwargs):
         """
         Suspend a running container.
 
-        :param container: The container to resume.
+        :param container: The container to suspend.
+        :param force: If `True`, try everything to suspend the container.
         """
         raise NotImplementedError
 

@@ -169,21 +169,19 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def delete_container(self, container, force=False, **kwargs):
+    def delete_container(self, container, **kwargs):
         """
         Delete the container.
 
         :param container: The container to delete.
-        :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
-    def delete_container_image(self, image, force=False, **kwargs):
+    def delete_container_image(self, image, **kwargs):
         """
         Delete the container image.
 
         :param image: The image to delete.
-        :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
@@ -271,7 +269,7 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def restart_container(self, container, force=False, **kwargs):
+    def restart_container(self, container, **kwargs):
         """
         Restart the container.
 
@@ -279,7 +277,6 @@ class ContainerBackend(Backend):
         be overriden, since the default implementation does two simple start/stop calls.
 
         :param container: The container to restart.
-        :param force: If `True`, try everything to restart the container.
         """
         self.stop_container(container, force)
         self.start_container(container)
@@ -292,12 +289,11 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def stop_container(self, container, force=False, **kwargs):
+    def stop_container(self, container, **kwargs):
         """
         Stop the container.
 
         :param container: The container to stop.
-        :param force: If `True`, try everything to stop the container.
         """
         raise NotImplementedError
 
@@ -335,12 +331,11 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def delete_container_snapshot(self, snapshot, force=False, **kwargs):
+    def delete_container_snapshot(self, snapshot, **kwargs):
         """
         Delete the container's snapshot.
 
         :param snapshot: The snapshot to delete.
-        :param force: Either to force the deletion or not.
         """
         raise NotImplementedError
 
@@ -371,13 +366,12 @@ class SnapshotableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def restore_container_snapshot(self, container, snapshot, force=False, **kwargs):
+    def restore_container_snapshot(self, container, snapshot, **kwargs):
         """
         Restore the container's snapshot.
 
         :param container: The container to restore.
         :param snapshot: The snapshot to restore.
-        :param force: If `True`, try everything to restore the container's snapshot.
         """
         raise NotImplementedError
 
@@ -407,21 +401,19 @@ class SuspendableContainerBackend(ContainerBackend):
         """
         raise NotImplementedError
 
-    def resume_container(self, container, force=False, **kwargs):
+    def resume_container(self, container, **kwargs):
         """
         Resume a suspended container.
 
         :param container: The container to resume.
-        :param force: If `True`, try everything to resume the container.
         """
         raise NotImplementedError
 
-    def suspend_container(self, container, force=False, **kwargs):
+    def suspend_container(self, container, **kwargs):
         """
         Suspend a running container.
 
         :param container: The container to suspend.
-        :param force: If `True`, try everything to suspend the container.
         """
         raise NotImplementedError
 

@@ -134,7 +134,8 @@ class ContainerBackend(Backend):
         """
         raise NotImplementedError
 
-    def create_container(self, name, ports, volumes, cmd=None, image=None, clone_of=None, **kwargs):
+    def create_container(self, username, uid, name, ports, volumes,
+                         cmd=None, image=None, clone_of=None, **kwargs):
         """
         Create a new container instance.
 
@@ -145,9 +146,9 @@ class ContainerBackend(Backend):
         `ContainerBackend.CONTAINER_KEY_CLONE_CONTAINER` and `ContainerBackend.CONTAINER_KEY_CLONE_IMAGE` where
         each of this fields has the value of `get_container` resp. `get_container_image`.
 
+        :param username: The username of the container owner.
+        :param uid: The user ID of the container owner.
         :param name: The name of the to be created container.
-                     It will be in the form 'u$user_id-$name'.
-                     Unique constraint: (`user`, `name`)
         :param ports: The ports that need to be available from the outside.
         :param volumes: The volumes to mount inside the container.
         :param cmd: An optional command to execute inside the container.

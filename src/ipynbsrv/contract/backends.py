@@ -279,7 +279,7 @@ class ContainerBackend(Backend):
 
         :param container: The container to restart.
         """
-        self.stop_container(container, force)
+        self.stop_container(container)
         self.start_container(container)
 
     def start_container(self, container):

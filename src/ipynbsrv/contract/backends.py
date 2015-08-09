@@ -55,11 +55,6 @@ class ContainerBackend(Backend):
     CONTAINER_KEY_CLONE_IMAGE = 'image'
 
     """
-    Key to be used for the value storing the container's port mappings.
-    """
-    CONTAINER_KEY_PORT_MAPPINGS = 'port_mappings'
-
-    """
     Key to be used for the value storing the status (see below) of the container.
     """
     CONTAINER_KEY_STATUS = 'status'
@@ -135,7 +130,7 @@ class ContainerBackend(Backend):
         raise NotImplementedError
 
     def create_container(self, username, uid, name, ports, volumes,
-                         cmd=None, image=None, clone_of=None, **kwargs):
+                         cmd=None, base_url=None, image=None, clone_of=None, **kwargs):
         """
         Create a new container instance.
 
@@ -152,6 +147,10 @@ class ContainerBackend(Backend):
         :param ports: The ports that need to be available from the outside.
         :param volumes: The volumes to mount inside the container.
         :param cmd: An optional command to execute inside the container.
+        :param base_url: If the container/image has a public exposed port, this is the base url the
+                         exposed service should listen on. It's something in the form of
+                         /ct/<encoded-IP-and-port>. This is required because the container is accessd
+                         via a reverse proxy.
         :param image: The bootstrap image/template to use.
         :param clone_of: The optional PK of the container the to be created one is a clone of.
 
@@ -238,16 +237,6 @@ class ContainerBackend(Backend):
         :return list The list of log messages for this container.
         """
         raise NotImplementedError
-
-    def get_container_port_mappings(self, container, **kwargs):
-        """
-        Return the container's port mappings.
-
-        :param container: The container to get the mappings for.
-
-        :return list A list of dicts describing the port mappings.
-                     Each entry must include the `ContainerBackend.PORT_MAPPING_KEY_*` fields.
-        """
 
     def get_containers(self, only_running=False, **kwargs):
         """

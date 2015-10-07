@@ -1,3 +1,3 @@
-# ipynbsrv-contract
+# coco-contract
 
-> Contract package for various pluggable ipynbsrv components.
+> Contract package for various pluggable coco components.

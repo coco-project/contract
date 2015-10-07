@@ -10,7 +10,7 @@ class Service(object):
 class EncryptionService(Service):
 
     """
-    The encryption service defines the API an implementation has to fullfil to be a compliant ipynbsrv encryption service.
+    The encryption service defines the API an implementation has to fullfil to be a compliant coco encryption service.
 
     These services are used whenever (sensitive) data have to be transfered between different actors
     and the connection cannot be considered secure.

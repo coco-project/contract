@@ -1,11 +1,11 @@
-from ipynbsrv.contract.errors import DirectoryNotFoundError
+from coco.contract.errors import DirectoryNotFoundError
 import os
 
 
 class Backend(object):
 
     """
-    Parent class for all pluggable ipynbsrv backend components.
+    Parent class for all pluggable coco backend components.
 
     The backend interface defines the representation of an external resource
     like a container or storage backend or any other form of resource
@@ -682,8 +682,8 @@ class UserBackend(Backend):
         """
         Validate that the given user exists and the password is correct.
 
-        If the user does not exist, an `ipynbsrv.contract.errors.UserNotFoundError` should be raised.
-        If the authentication failed, an an `ipynbsrv.contract.errors.AuthenticationError` should be raised.
+        If the user does not exist, a `coco.contract.errors.UserNotFoundError` should be raised.
+        If the authentication failed, an `coco.contract.errors.AuthenticationError` should be raised.
         If the authentication went well, the user should be returned.
 
         :param user: The user to validate.

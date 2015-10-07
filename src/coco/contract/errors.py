@@ -1,7 +1,7 @@
 class Error(Exception):
 
     """
-    Base error for all ipynbsrv exceptions.
+    Base error for all coco exceptions.
 
     Only when throwing an instance of this error one can be sure it
     will get caught by the application. All other exceptions might
